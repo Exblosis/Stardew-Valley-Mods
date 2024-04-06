@@ -22,6 +22,7 @@ namespace LetsMoveIt
 
         public static object movingObject;
         public static Vector2 movingTile;
+        public static GameLocation movingLocation;
         public static Vector2 movingOffset;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
@@ -68,7 +69,18 @@ namespace LetsMoveIt
                 }
                 else if (movingObject is TerrainFeature)
                 {
-                    (movingObject as TerrainFeature).draw(e.SpriteBatch);
+                    //(movingObject as TerrainFeature).drawInMenu(e.SpriteBatch, new Vector2(Game1.getMouseX() - 0, Game1.getMouseY() - 0), Utility.PointToVector2(Game1.currentCursorTile.ToPoint()), 4f, 1f);
+                    var ltf = (movingObject as TerrainFeature).getBoundingBox();
+                    for (int x_offset = 0; x_offset < ltf.Width / 64; x_offset++)
+                    {
+                        //SMonitor.Log(x_offset + " | " + ltf.Width / 64, LogLevel.Info); // <<< debug >>>
+                        e.SpriteBatch.Draw(Game1.mouseCursors, new Vector2(Game1.getMouseX() - 32 + (x_offset * 64), Game1.getMouseY() - 32), new Microsoft.Xna.Framework.Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.01f);
+                    }
+                }
+                else if (movingObject is Crop)
+                {
+                    //SMonitor.Log(" | " + Game1.currentCursorTile, LogLevel.Info); // <<< debug >>>
+                    (movingObject as Crop).drawWithOffset(e.SpriteBatch, Game1.currentCursorTile, Color.White, 0f, new Vector2(32));
                 }
                 else if (movingObject is Object)
                 {
@@ -111,8 +123,8 @@ namespace LetsMoveIt
             }
             if (e.Button == Config.MoveKey)
             {
-                GameLocation location = Game1.currentLocation;
-                PickupObject(location);
+                // GameLocation location = Game1.currentLocation;
+                PickupObject(Game1.currentLocation);
             }
         }
 
@@ -121,11 +133,11 @@ namespace LetsMoveIt
             movingObject = null;
         }
 
-        private void Player_Warped(object sender, StardewModdingAPI.Events.WarpedEventArgs e)
-        {
-            if (e.Player.IsMainPlayer)
-                movingObject = null;
-        }
+        //private void Player_Warped(object sender, StardewModdingAPI.Events.WarpedEventArgs e)
+        //{
+        //    if (e.Player.IsMainPlayer)
+        //        movingObject = null;
+        //}
 
         private void GameLoop_SaveLoaded(object sender, StardewModdingAPI.Events.SaveLoadedEventArgs e)
         {
@@ -152,6 +164,18 @@ namespace LetsMoveIt
                 name: () => "Mod Enabled",
                 getValue: () => Config.ModEnabled,
                 setValue: value => Config.ModEnabled = value
+            );
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => "Move crops separately from farmland",
+                getValue: () => Config.MoveCropWithoutTile,
+                setValue: value => Config.MoveCropWithoutTile = value
+            );
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => "Move Buildings",
+                getValue: () => Config.MoveBuilding,
+                setValue: value => Config.MoveBuilding = value
             );
             configMenu.AddKeybind(
                 mod: ModManifest,
