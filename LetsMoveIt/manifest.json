@@ -1,7 +1,7 @@
 ﻿{
   "Name": "LetsMoveIt",
   "Author": "Exblosis",
-  "Version": "0.5.1",
+  "Version": "0.5.2",
   "Description": "Let's Move It.",
   "UniqueID": "Exblosis.LetsMoveIt",
   "EntryDll": "LetsMoveIt.dll",

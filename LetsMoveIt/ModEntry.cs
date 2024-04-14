@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
+using StardewValley.Menus;
 using StardewValley.TerrainFeatures;
 using System.Collections.Generic;
 using System.Linq;
@@ -156,7 +157,7 @@ namespace LetsMoveIt
 
         private void OnButtonPressed(object sender, StardewModdingAPI.Events.ButtonPressedEventArgs e)
         {
-            if (!Config.ModEnabled || !Context.IsPlayerFree)
+            if (!Config.ModEnabled || !Context.IsPlayerFree && Game1.activeClickableMenu is not CarpenterMenu)
                 return;
             if(e.Button == Config.CancelKey && MovingObject is not null)
             {
