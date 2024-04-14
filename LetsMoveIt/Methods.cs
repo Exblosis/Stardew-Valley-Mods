@@ -128,7 +128,6 @@ namespace LetsMoveIt
         }
 
         /// <summary>Place Object</summary>
-        /// <param name="helper">Modding helper</param>
         /// <param name="location">The current location.</param>
         /// <param name="overwriteTile">To Overwrite existing Object.</param>
         public static void PlaceObject(GameLocation location, bool overwriteTile)
