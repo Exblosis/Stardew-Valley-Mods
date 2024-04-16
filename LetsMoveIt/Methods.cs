@@ -142,17 +142,20 @@ namespace LetsMoveIt
             Vector2 cursorTile = Game1.currentCursorTile;
             if (!overwriteTile)
             {
-                if (!location.isTilePassable(cursorTile) || !location.isTileOnMap(cursorTile) || location.isCropAtTile((int)cursorTile.X, (int)cursorTile.Y) || location.IsTileBlockedBy(cursorTile, ignorePassables: CollisionMask.All))
+                if (!location.isTilePassable(cursorTile) || !location.isTileOnMap(cursorTile) || location.isTileHoeDirt(cursorTile) || location.isCropAtTile((int)cursorTile.X, (int)cursorTile.Y) || location.IsTileBlockedBy(cursorTile, ignorePassables: CollisionMask.All))
                 {
                     //SMonitor.Log("Impassable " + Game1.tileSize, LogLevel.Info); // <<< debug >>>
-                    Game1.playSound("cancel");
-                    return;
+                    if (MovingObject is not Crop && !location.isTileHoeDirt(cursorTile))
+                    {
+                        Game1.playSound("cancel");
+                        return;
+                    }
                 }
                 if (BoundingBoxTile.Count is not 0)
                 {
                     bool occupied = false;
                     BoundingBoxTile.ToList().ForEach(b => {
-                        if (!location.isTilePassable(b) || !location.isTileOnMap(b) || location.isCropAtTile((int)b.X, (int)b.Y) || location.IsTileBlockedBy(b, ignorePassables: CollisionMask.All))
+                        if (!location.isTilePassable(b) || !location.isTileOnMap(b) || location.isTileHoeDirt(b) || location.isCropAtTile((int)b.X, (int)b.Y) || location.IsTileBlockedBy(b, ignorePassables: CollisionMask.All))
                         {
                             occupied = true;
                         }
@@ -172,11 +175,14 @@ namespace LetsMoveIt
             }
             else if (MovingObject is Object)
             {
-                //SMonitor.Log(Game1.currentLocation.ToString() + " | " + movingLocation, LogLevel.Info); // <<< debug >>>
+                //SMonitor.Log("Object", LogLevel.Info); // <<< debug >>>
                 var obj = MovingLocation.objects[MovingTile];
                 MovingLocation.objects.Remove(MovingTile);
-                location.objects[cursorTile] = obj;
-                location.objects[cursorTile].TileLocation = cursorTile;
+                if (location.objects.ContainsKey(cursorTile))
+                {
+                    location.objects.Remove(cursorTile);
+                }
+                location.objects.Add(cursorTile, obj);
                 MovingObject = null;
             }
             else if (MovingObject is FarmAnimal)
@@ -186,6 +192,7 @@ namespace LetsMoveIt
             }
             else if (MovingObject is ResourceClump)
             {
+                //SMonitor.Log("RC", LogLevel.Info); // <<< debug >>>
                 int index = MovingLocation.resourceClumps.IndexOf(MovingObject as ResourceClump);
                 if (index >= 0)
                 {
@@ -232,7 +239,11 @@ namespace LetsMoveIt
                     var tf = MovingLocation.terrainFeatures[MovingTile];
                     //SMonitor.Log("TF: " + tf, LogLevel.Info); // <<< debug >>>
                     MovingLocation.terrainFeatures.Remove(MovingTile);
-                    location.terrainFeatures[cursorTile] = tf;
+                    if(location.terrainFeatures.ContainsKey(cursorTile))
+                    {
+                        location.terrainFeatures.Remove(cursorTile);
+                    }
+                    location.terrainFeatures.Add(cursorTile, tf);
                     HashSet<Vector2> neighbors = new() { cursorTile + new Vector2(0, 1), cursorTile + new Vector2(1, 0), cursorTile + new Vector2(0, -1), cursorTile + new Vector2(-1, 0) };
                     //SMonitor.Log("cursor:" + cursorTile, LogLevel.Info); // <<< debug >>>
                     foreach (Vector2 ct in neighbors)
