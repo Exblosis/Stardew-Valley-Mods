@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>0.5.3</Version>
+    <Version>0.5.4</Version>
     <TargetFramework>net6.0</TargetFramework>
-	<EnableHarmony>true</EnableHarmony>
+	<!--<EnableHarmony>true</EnableHarmony>-->
 	<Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
