@@ -35,7 +35,7 @@ namespace LetsMoveIt
         public bool EnableMoveGrass { get; set; } = true;
         public bool EnableMoveFarmland { get; set; } = true;
         public bool EnableMoveBush { get; set; } = true;
-        
+
         //Sound
         public string Sound { get; set; } = "shwip";
 

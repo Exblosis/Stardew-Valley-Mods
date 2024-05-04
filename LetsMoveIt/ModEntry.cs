@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
@@ -7,8 +8,6 @@ using StardewValley.Buildings;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.TerrainFeatures;
-using System.Collections.Generic;
-using System.Threading.Tasks.Sources;
 using SObject = StardewValley.Object;
 
 namespace LetsMoveIt
@@ -16,26 +15,23 @@ namespace LetsMoveIt
     /// <summary>The mod entry point.</summary>
     internal partial class ModEntry : Mod
     {
+        private static ModConfig Config = null!;
 
-        private static IMonitor SMonitor;
-        private static ModConfig Config;
-
-        private static object MovingObject;
+        private static object? MovingObject;
+        private static GameLocation MovingLocation = null!;
         private static Vector2 MovingTile;
-        private static GameLocation MovingLocation;
         private static Vector2 MovingOffset;
-        private static readonly HashSet<Vector2> BoundingBoxTile = new();
+        private static readonly HashSet<Vector2> BoundingBoxTile = [];
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             Config = helper.ReadConfig<ModConfig>();
+            I18n.Init(helper.Translation);
 
             if (!Config.ModEnabled)
                 return;
-
-            SMonitor = Monitor;
 
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
@@ -43,7 +39,7 @@ namespace LetsMoveIt
             helper.Events.Display.RenderedWorld += OnRenderedWorld;
             helper.Events.Input.ButtonPressed += OnButtonPressed;
         }
-        private void OnRenderedWorld(object sender, RenderedWorldEventArgs e)
+        private void OnRenderedWorld(object? sender, RenderedWorldEventArgs e)
         {
             if (!Config.ModEnabled)
             {
@@ -57,15 +53,15 @@ namespace LetsMoveIt
                 BoundingBoxTile.Clear();
                 if (MovingObject is ResourceClump resourceClump)
                 {
-                    if(MovingObject is GiantCrop giantCrop)
+                    if (MovingObject is GiantCrop giantCrop)
                     {
                         var data = giantCrop.GetData();
-                        //SMonitor.Log("Data: " + data.TileSize, LogLevel.Debug); // <<< debug >>>
+                        //Monitor.Log("Data: " + data.TileSize, LogLevel.Debug); // <<< debug >>>
                         for (int x_offset = 0; x_offset < data.TileSize.X; x_offset++)
                         {
                             for (int y_offset = 0; y_offset < data.TileSize.Y; y_offset++)
                             {
-                                e.SpriteBatch.Draw(Game1.mouseCursors, GetGridPosition(x_offset * 64, y_offset * 64), new Microsoft.Xna.Framework.Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+                                e.SpriteBatch.Draw(Game1.mouseCursors, GetGridPosition(x_offset * 64, y_offset * 64), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                             }
                         }
                         Texture2D texture = Game1.content.Load<Texture2D>(data.Texture);
@@ -95,7 +91,7 @@ namespace LetsMoveIt
                     for (int x_offset = 0; x_offset < tf.Width / 64; x_offset++)
                     {
                         BoundingBoxTile.Add(Game1.currentCursorTile + new Vector2(x_offset, 0));
-                        e.SpriteBatch.Draw(Game1.mouseCursors, GetGridPosition(x_offset * 64), new Microsoft.Xna.Framework.Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+                        e.SpriteBatch.Draw(Game1.mouseCursors, GetGridPosition(x_offset * 64), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                     }
                     if (MovingObject is Bush bush)
                     {
@@ -198,7 +194,7 @@ namespace LetsMoveIt
                     {
                         for (int y_offset = 0; y_offset < building.tilesHigh.Value; y_offset++)
                         {
-                            e.SpriteBatch.Draw(Game1.mouseCursors, new Vector2((x + x_offset) * 64 - Game1.viewport.X, (y + y_offset) * 64 - Game1.viewport.Y), new Microsoft.Xna.Framework.Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.01f);
+                            e.SpriteBatch.Draw(Game1.mouseCursors, new Vector2((x + x_offset) * 64 - Game1.viewport.X, (y + y_offset) * 64 - Game1.viewport.Y), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.01f);
                         }
                     }
                 }
@@ -211,11 +207,11 @@ namespace LetsMoveIt
             return Game1.GlobalToLocal(Game1.viewport, new Vector2(xOffset, yOffset) + new Vector2(Game1.currentCursorTile.X * 64f, Game1.currentCursorTile.Y * 64f));
         }
 
-        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)
         {
             if (!Config.ModEnabled || !Context.IsPlayerFree && Game1.activeClickableMenu is not CarpenterMenu)
                 return;
-            if(e.Button == Config.CancelKey && MovingObject is not null)
+            if (e.Button == Config.CancelKey && MovingObject is not null)
             {
                 PlaySound();
                 MovingObject = null;
@@ -228,17 +224,17 @@ namespace LetsMoveIt
             }
         }
 
-        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
+        private void OnMenuChanged(object? sender, MenuChangedEventArgs e)
         {
             MovingObject = null;
         }
 
-        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
         {
             MovingObject = null;
         }
 
-        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
         {
 
             // get Generic Mod Config Menu's API (if it's installed)
@@ -255,90 +251,90 @@ namespace LetsMoveIt
             // Config
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Mod Enabled",
+                name: () => I18n.Config("ModEnabled"),
                 getValue: () => Config.ModEnabled,
                 setValue: value => Config.ModEnabled = value
             );
             configMenu.AddKeybind(
                 mod: ModManifest,
-                name: () => "Mod Key",
+                name: () => I18n.Config("ModKey"),
                 getValue: () => Config.ModKey,
                 setValue: value => Config.ModKey = value
             );
             configMenu.AddKeybind(
                 mod: ModManifest,
-                name: () => "Move Key",
+                name: () => I18n.Config("MoveKey"),
                 getValue: () => Config.MoveKey,
                 setValue: value => Config.MoveKey = value
             );
             configMenu.AddKeybind(
                 mod: ModManifest,
-                name: () => "Overwrite Key",
-                tooltip: () => "Warning: can delete something",
+                name: () => I18n.Config("OverwriteKey"),
+                tooltip: () => I18n.Config("OverwriteKey.Tooltip"),
                 getValue: () => Config.OverwriteKey,
                 setValue: value => Config.OverwriteKey = value
             );
             configMenu.AddKeybind(
                 mod: ModManifest,
-                name: () => "Cancel Movieng",
+                name: () => I18n.Config("CancelKey"),
                 getValue: () => Config.CancelKey,
                 setValue: value => Config.CancelKey = value
             );
             configMenu.AddTextOption(
                 mod: ModManifest,
-                name: () => "Sound",
+                name: () => I18n.Config("Sound"),
                 getValue: () => Config.Sound,
                 setValue: value => Config.Sound = value
             );
             // Prioritize Crops
             configMenu.AddSectionTitle(
                 mod: ModManifest,
-                text: () => "Prioritize Crops"
+                text: () => I18n.Config("PrioritizeCrops")
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move crop separately from farmland",
+                name: () => I18n.Config("MoveCropWithoutTile"),
                 getValue: () => Config.MoveCropWithoutTile,
                 setValue: value => Config.MoveCropWithoutTile = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move crop separately from garden pot",
+                name: () => I18n.Config("MoveCropWithoutIndoorPot"),
                 getValue: () => Config.MoveCropWithoutIndoorPot,
                 setValue: value => Config.MoveCropWithoutIndoorPot = value
             );
             configMenu.AddParagraph(
                 mod: ModManifest,
-                text: () => "Note: Move tea buch from garden pot not work."
+                text: () => I18n.Config("IndoorPot.Note")
             );
-            // Enable & Disable Components
+            // Enable & Disable Components Page
             configMenu.AddPageLink(
                 mod: ModManifest,
                 pageId: "Components",
-                text: () => "Enable & Disable Components Page",
-                tooltip: () => "CLICK ME"
+                text: () => I18n.Config("Page.Components.Link"),
+                tooltip: () => I18n.Config("Page.Components.Link.Tooltip")
             );
             configMenu.AddPage(
                 mod: ModManifest,
                 pageId: "Components",
-                pageTitle: () => "Components"
+                pageTitle: () => I18n.Config("Page.Components.Title")
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Buildings",
+                name: () => I18n.Config("EnableMoveBuilding"),
                 getValue: () => Config.EnableMoveBuilding,
                 setValue: value => Config.EnableMoveBuilding = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Entities",
-                tooltip: () => "Villagers, Animals, Monsters",
+                name: () => I18n.Config("EnableMoveEntity"),
+                tooltip: () => I18n.Config("EnableMoveEntity.Tooltip"),
                 getValue: () => Config.EnableMoveEntity,
                 setValue: value => Config.EnableMoveEntity = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Crops",
+                name: () => I18n.Config("EnableMoveCrop"),
                 getValue: () => Config.EnableMoveCrop,
                 setValue: value => Config.EnableMoveCrop = value
             );
@@ -350,28 +346,28 @@ namespace LetsMoveIt
             // Objects
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "All Objects",
+                name: () => I18n.Config("EnableMoveObject"),
                 getValue: () => Config.EnableMoveObject,
                 setValue: value => Config.EnableMoveObject = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Placed Objects",
-                tooltip: () => "Craftable, Mine Barrels",
+                name: () => I18n.Config("EnableMovePlaceableObject"),
+                tooltip: () => I18n.Config("EnableMovePlaceableObject.Tooltip"),
                 getValue: () => Config.EnableMovePlaceableObject,
                 setValue: value => Config.EnableMovePlaceableObject = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Collectibles",
-                tooltip: () => "Flowers, Minerals",
+                name: () => I18n.Config("EnableMoveCollectibleObject"),
+                tooltip: () => I18n.Config("EnableMoveCollectibleObject.Tooltip"),
                 getValue: () => Config.EnableMoveCollectibleObject,
                 setValue: value => Config.EnableMoveCollectibleObject = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Generated Objects",
-                tooltip: () => "Twigs, Weeds, Stones, Ores, Worms",
+                name: () => I18n.Config("EnableMoveGeneratedObject"),
+                tooltip: () => I18n.Config("EnableMoveGeneratedObject.Tooltip"),
                 getValue: () => Config.EnableMoveGeneratedObject,
                 setValue: value => Config.EnableMoveGeneratedObject = value
             );
@@ -383,37 +379,37 @@ namespace LetsMoveIt
             // Resource Clumps
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "All Resource Clumps",
+                name: () => I18n.Config("EnableMoveResourceClump"),
                 getValue: () => Config.EnableMoveResourceClump,
                 setValue: value => Config.EnableMoveResourceClump = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Giant Crops",
+                name: () => I18n.Config("EnableMoveGiantCrop"),
                 getValue: () => Config.EnableMoveGiantCrop,
                 setValue: value => Config.EnableMoveGiantCrop = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Stumps",
+                name: () => I18n.Config("EnableMoveStump"),
                 getValue: () => Config.EnableMoveStump,
                 setValue: value => Config.EnableMoveStump = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Hollow Logs",
+                name: () => I18n.Config("EnableMoveHollowLog"),
                 getValue: () => Config.EnableMoveHollowLog,
                 setValue: value => Config.EnableMoveHollowLog = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Boulders",
+                name: () => I18n.Config("EnableMoveBoulder"),
                 getValue: () => Config.EnableMoveBoulder,
                 setValue: value => Config.EnableMoveBoulder = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Meteorites",
+                name: () => I18n.Config("EnableMoveMeteorite"),
                 getValue: () => Config.EnableMoveMeteorite,
                 setValue: value => Config.EnableMoveMeteorite = value
             );
@@ -425,43 +421,43 @@ namespace LetsMoveIt
             // Terrain Features
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "All Terrain Features",
+                name: () => I18n.Config("EnableMoveTerrainFeature"),
                 getValue: () => Config.EnableMoveTerrainFeature,
                 setValue: value => Config.EnableMoveTerrainFeature = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Flooring",
+                name: () => I18n.Config("EnableMoveFlooring"),
                 getValue: () => Config.EnableMoveFlooring,
                 setValue: value => Config.EnableMoveFlooring = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Trees",
+                name: () => I18n.Config("EnableMoveTree"),
                 getValue: () => Config.EnableMoveTree,
                 setValue: value => Config.EnableMoveTree = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Fruit Trees",
+                name: () => I18n.Config("EnableMoveFruitTree"),
                 getValue: () => Config.EnableMoveFruitTree,
                 setValue: value => Config.EnableMoveFruitTree = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Grass",
+                name: () => I18n.Config("EnableMoveGrass"),
                 getValue: () => Config.EnableMoveGrass,
                 setValue: value => Config.EnableMoveGrass = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Farmland",
+                name: () => I18n.Config("EnableMoveFarmland"),
                 getValue: () => Config.EnableMoveFarmland,
                 setValue: value => Config.EnableMoveFarmland = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Move Bushes",
+                name: () => I18n.Config("EnableMoveBush"),
                 getValue: () => Config.EnableMoveBush,
                 setValue: value => Config.EnableMoveBush = value
             );

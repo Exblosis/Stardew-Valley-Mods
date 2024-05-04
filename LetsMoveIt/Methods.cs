@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
@@ -6,8 +8,6 @@ using StardewValley.Locations;
 using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using System.Collections.Generic;
-using System.Linq;
 using SObject = StardewValley.Object;
 
 namespace LetsMoveIt
@@ -55,9 +55,9 @@ namespace LetsMoveIt
                     }
                 }
             }
-            if ((location is AnimalHouse) && Config.EnableMoveEntity)
+            if ((location is AnimalHouse animalHouse) && Config.EnableMoveEntity)
             {
-                foreach (var a in (location as AnimalHouse).animals.Values)
+                foreach (var a in animalHouse.animals.Values)
                 {
                     if (a.GetBoundingBox().Contains(mp))
                     {
@@ -82,7 +82,7 @@ namespace LetsMoveIt
                 if ((obj is IndoorPot pot) && Config.MoveCropWithoutIndoorPot)
                 {
                     //pot.NetFields.GetFields().ToList().ForEach(l =>
-                    //    SMonitor.Log(l.Name + ": " + l, LogLevel.Debug) // <<< List NetFields >>> <<< debug >>>
+                    //    Monitor.Log(l.Name + ": " + l, LogLevel.Debug) // <<< List NetFields >>> <<< debug >>>
                     //);
                     //if (pot.bush.Value is not null && Config.EnableMoveBush)
                     //{
@@ -125,31 +125,26 @@ namespace LetsMoveIt
                         return;
                     if ((rcIndex is ResourceClump.meteoriteIndex) && !Config.EnableMoveMeteorite)
                         return;
-                    //rc.NetFields.GetFields().ToList().ForEach(l =>
-                    //    SMonitor.Log(l.Name + ": " + l, LogLevel.Debug) // <<< List NetFields >>> <<< debug >>>
-                    //);
+
                     Pickup(rc, cursorTile, rc.Location);
                     return;
                 }
             }
             if (location.isCropAtTile((int)cursorTile.X, (int)cursorTile.Y) && Config.MoveCropWithoutTile && Config.EnableMoveCrop)
             {
-                var cp = (location.terrainFeatures[cursorTile] as HoeDirt).crop;
+                var cp = ((HoeDirt)location.terrainFeatures[cursorTile]).crop;
                 Pickup(cp, cursorTile, cp.currentLocation);
                 return;
             }
             if (location.largeTerrainFeatures is not null && Config.EnableMoveTerrainFeature)
             {
-                //location.terrainFeatures.ToList().ToList().ForEach(l =>
-                //    SMonitor.Log(l.Values.ToList()[1] + " " + l.Keys.ToList()[1], LogLevel.Debug) // <<< List NetFields >>> <<< debug >>>
-                //);
                 foreach (var ltf in location.largeTerrainFeatures)
                 {
                     if (ltf.getBoundingBox().Contains((int)cursorTile.X * 64, (int)cursorTile.Y * 64))
                     {
                         if ((ltf is Bush) && !Config.EnableMoveBush)
                             return;
-                        
+
                         Pickup(ltf, cursorTile, ltf.Location);
                         return;
                     }
@@ -175,7 +170,6 @@ namespace LetsMoveIt
             }
             if (location.IsTileOccupiedBy(cursorTile, CollisionMask.Buildings) && Config.EnableMoveBuilding)
             {
-                //SMonitor.Log("pickupBuilding | " + location.isBuildable(cursorTile), LogLevel.Debug); // <<< debug >>>
                 var building = location.getBuildingAt(cursorTile);
                 if (building != null)
                 {
@@ -205,7 +199,6 @@ namespace LetsMoveIt
             {
                 if (!location.isTilePassable(cursorTile) || !location.isTileOnMap(cursorTile) || location.isTileHoeDirt(cursorTile) || location.isCropAtTile((int)cursorTile.X, (int)cursorTile.Y) || location.IsTileBlockedBy(cursorTile, ignorePassables: CollisionMask.All))
                 {
-                    //SMonitor.Log("Impassable " + Game1.tileSize, LogLevel.Debug); // <<< debug >>>
                     if (MovingObject is not Crop || !location.isTileHoeDirt(cursorTile))
                     {
                         Game1.playSound("cancel");
@@ -215,7 +208,8 @@ namespace LetsMoveIt
                 if (BoundingBoxTile.Count is not 0)
                 {
                     bool occupied = false;
-                    BoundingBoxTile.ToList().ForEach(b => {
+                    BoundingBoxTile.ToList().ForEach(b =>
+                    {
                         if (!location.isTilePassable(b) || !location.isTileOnMap(b) || location.isTileHoeDirt(b) || location.isCropAtTile((int)b.X, (int)b.Y) || location.IsTileBlockedBy(b, ignorePassables: CollisionMask.All))
                         {
                             occupied = true;
@@ -242,8 +236,6 @@ namespace LetsMoveIt
             }
             else if (MovingObject is SObject sObject)
             {
-                //SMonitor.Log("Object", LogLevel.Debug); // <<< debug >>>
-                //var sObject = MovingLocation.objects[MovingTile];
                 MovingLocation.objects.Remove(MovingTile);
                 if (location.objects.ContainsKey(cursorTile))
                 {
@@ -254,7 +246,6 @@ namespace LetsMoveIt
             }
             else if (MovingObject is ResourceClump resourceClump)
             {
-                //SMonitor.Log("RC", LogLevel.Debug); // <<< debug >>>
                 int index = MovingLocation.resourceClumps.IndexOf(resourceClump);
                 if (index >= 0)
                 {
@@ -278,7 +269,6 @@ namespace LetsMoveIt
                 if (MovingObject is LargeTerrainFeature largeTerrainFeature && MovingLocation.largeTerrainFeatures.Contains(largeTerrainFeature))
                 {
                     int index = MovingLocation.largeTerrainFeatures.IndexOf(largeTerrainFeature);
-                    //SMonitor.Log("LTF: " + index, LogLevel.Debug); // <<< debug >>>
                     if (index >= 0)
                     {
                         if (location == MovingLocation)
@@ -341,13 +331,12 @@ namespace LetsMoveIt
                 else if (MovingLocation.terrainFeatures.ContainsKey(MovingTile))
                 {
                     MovingLocation.terrainFeatures.Remove(MovingTile);
-                    if(location.terrainFeatures.ContainsKey(cursorTile))
+                    if (location.terrainFeatures.ContainsKey(cursorTile))
                     {
                         location.terrainFeatures.Remove(cursorTile);
                     }
                     location.terrainFeatures.Add(cursorTile, terrainFeature);
-                    HashSet<Vector2> neighbors = new() { cursorTile + new Vector2(0, 1), cursorTile + new Vector2(1, 0), cursorTile + new Vector2(0, -1), cursorTile + new Vector2(-1, 0) };
-                    //SMonitor.Log("cursor:" + cursorTile, LogLevel.Debug); // <<< debug >>>
+                    HashSet<Vector2> neighbors = [cursorTile + new Vector2(0, 1), cursorTile + new Vector2(1, 0), cursorTile + new Vector2(0, -1), cursorTile + new Vector2(-1, 0)];
                     foreach (Vector2 ct in neighbors)
                     {
                         if (location.terrainFeatures.ContainsKey(ct))
@@ -448,7 +437,7 @@ namespace LetsMoveIt
 
         private static void PlaySound()
         {
-            if(!string.IsNullOrEmpty(Config.Sound))
+            if (!string.IsNullOrEmpty(Config.Sound))
                 Game1.playSound(Config.Sound);
         }
 
@@ -463,7 +452,7 @@ namespace LetsMoveIt
             MovingTile = cursorTile;
             MovingLocation = lastLocation;
             MovingOffset = offset;
-            //SMonitor.Log($"Picked up {obj}", LogLevel.Info); // <<< debug >>>
+            //Monitor.Log($"Picked up {obj}", LogLevel.Info); // <<< debug >>>
             Helper.Input.Suppress(Config.MoveKey);
             PlaySound();
         }
