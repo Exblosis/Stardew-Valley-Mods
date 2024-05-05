@@ -16,17 +16,17 @@
 
 | `en = default`    | Let's Move It                      |
 |:------------------|:----------------------------------:|
-| `en` \| Englich   | [✔️](LetsMoveIt/i18n/default.json) |
 | `de` \| Deutsch   | [✔️](LetsMoveIt/i18n/de.json)      |
-| `it` \| Italiano  | [❌](LetsMoveIt/i18n)              |
-| `fr` \| Français  | [❌](LetsMoveIt/i18n)              |
+| `en` \| Englich   | [✔️](LetsMoveIt/i18n/default.json) |
 | `es` \| Español   | [❌](LetsMoveIt/i18n)              |
-| `pt` \| Português | [❌](LetsMoveIt/i18n)              |
+| `fr` \| Français  | [❌](LetsMoveIt/i18n)              |
 | `hu` \| Magyar    | [❌](LetsMoveIt/i18n)              |
-| `tr` \| Türkçe    | [❌](LetsMoveIt/i18n)              |
-| `ru` \| Русский   | [❌](LetsMoveIt/i18n)              |
+| `it` \| Italiano  | [❌](LetsMoveIt/i18n)              |
 | `ja` \| 日本語     | [❌](LetsMoveIt/i18n)              |
-| `zh` \| 中国人     | [❌](LetsMoveIt/i18n)              |
-| `ko` \| 한국인     | [❌](LetsMoveIt/i18n)              |
+| `ko` \| 한국어     | [❌](LetsMoveIt/i18n)              |
+| `pt` \| Português | [❌](LetsMoveIt/i18n)              |
+| `ru` \| Русский   | [❌](LetsMoveIt/i18n)              |
+| `tr` \| Türkçe    | [❌](LetsMoveIt/i18n)              |
+| `zh` \| 中文       | [❌](LetsMoveIt/i18n)              |
 
 You have custom languages, i can add it to the list.
