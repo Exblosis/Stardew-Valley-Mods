@@ -14,7 +14,7 @@
   - You can make a pull request with the file. (recommended)
   - You can open a issue with the file and add the "translation" label.
 
-|                   | Let's Move It                      |
+| `en = default`    | Let's Move It                      |
 |:------------------|:----------------------------------:|
 | `en` \| Englich   | [✔️](LetsMoveIt/i18n/default.json) |
 | `de` \| Deutsch   | [✔️](LetsMoveIt/i18n/de.json)      |
