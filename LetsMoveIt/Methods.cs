@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
@@ -125,7 +126,7 @@ namespace LetsMoveIt
                         return;
                     if ((rcIndex is ResourceClump.meteoriteIndex) && !Config.EnableMoveMeteorite)
                         return;
-
+                    
                     Pickup(rc, cursorTile, rc.Location);
                     return;
                 }
@@ -164,7 +165,7 @@ namespace LetsMoveIt
                     return;
                 if ((tf is Bush) && !Config.EnableMoveBush) // Tea Bush
                     return;
-
+                
                 Pickup(tf, cursorTile, tf.Location);
                 return;
             }
@@ -185,7 +186,7 @@ namespace LetsMoveIt
         /// <summary>Place Object</summary>
         /// <param name="location">The current location.</param>
         /// <param name="overwriteTile">To Overwrite existing Object.</param>
-        public static void PlaceObject(GameLocation location, bool overwriteTile)
+        public void PlaceObject(GameLocation location, bool overwriteTile)
         {
             if (!Config.ModEnabled)
             {
@@ -228,21 +229,33 @@ namespace LetsMoveIt
                 if (character is not Monster)
                     character.Halt();
                 MovingObject = null;
+                return;
             }
             else if (MovingObject is FarmAnimal farmAnimal)
             {
                 farmAnimal.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
                 MovingObject = null;
+                return;
             }
             else if (MovingObject is SObject sObject)
             {
-                MovingLocation.objects.Remove(MovingTile);
-                if (location.objects.ContainsKey(cursorTile))
+                if (MovingLocation.objects.ContainsKey(MovingTile))
                 {
-                    location.objects.Remove(cursorTile);
+                    MovingLocation.objects.Remove(MovingTile);
+                    if (location.objects.ContainsKey(cursorTile))
+                    {
+                        location.objects.Remove(cursorTile);
+                    }
+                    location.objects.Add(cursorTile, sObject);
+                    MovingObject = null;
+                    return;
                 }
-                location.objects.Add(cursorTile, sObject);
-                MovingObject = null;
+                else
+                {
+                    MovingObject = null;
+                    Game1.playSound("dwop");
+                    return;
+                }
             }
             else if (MovingObject is ResourceClump resourceClump)
             {
@@ -253,6 +266,7 @@ namespace LetsMoveIt
                     {
                         location.resourceClumps[index].netTile.Value = cursorTile;
                         MovingObject = null;
+                        return;
                     }
                     else
                     {
@@ -261,7 +275,14 @@ namespace LetsMoveIt
                         int newIndex = location.resourceClumps.IndexOf(resourceClump);
                         location.resourceClumps[newIndex].netTile.Value = cursorTile;
                         MovingObject = null;
+                        return;
                     }
+                }
+                else
+                {
+                    MovingObject = null;
+                    Game1.playSound("dwop");
+                    return;
                 }
             }
             else if (MovingObject is TerrainFeature terrainFeature)
@@ -275,6 +296,7 @@ namespace LetsMoveIt
                         {
                             location.largeTerrainFeatures[index].netTilePosition.Value = cursorTile;
                             MovingObject = null;
+                            return;
                         }
                         else
                         {
@@ -283,7 +305,14 @@ namespace LetsMoveIt
                             int newIndex = location.largeTerrainFeatures.IndexOf(largeTerrainFeature);
                             location.largeTerrainFeatures[newIndex].netTilePosition.Value = cursorTile;
                             MovingObject = null;
+                            return;
                         }
+                    }
+                    else
+                    {
+                        MovingObject = null;
+                        Game1.playSound("dwop");
+                        return;
                     }
                 }
                 //else if (MovingObject is Bush bush)
@@ -300,7 +329,7 @@ namespace LetsMoveIt
                 //            pot.bush.Value = bush;
                 //            pot.bush.Value.netTilePosition.Value = cursorTile;
                 //            MovingObject = null;
-                //            SMonitor.Log("IP Place", LogLevel.Debug); // <<< debug >>>
+                //            Monitor.Log("IP Place", LogLevel.Debug); // <<< debug >>>
                 //        }
                 //    }
                 //    else
@@ -312,20 +341,20 @@ namespace LetsMoveIt
                 //        bush.inPot.Value = false;
                 //        location.terrainFeatures.Add(cursorTile, bush);
                 //        MovingObject = null;
-                //        SMonitor.Log("TF Place", LogLevel.Debug); // <<< debug >>>
+                //        Monitor.Log("TF Place", LogLevel.Debug); // <<< debug >>>
                 //    }
                 //    if (MovingLocation.objects.TryGetValue(MovingTile, out var oldOpj))
                 //    {
                 //        if (oldOpj is IndoorPot pot)
                 //        {
                 //            pot.bush.Value = null;
-                //            SMonitor.Log("IP Remove", LogLevel.Debug); // <<< debug >>>
+                //            Monitor.Log("IP Remove", LogLevel.Debug); // <<< debug >>>
                 //        }
                 //    }
                 //    if (MovingLocation.terrainFeatures.ContainsKey(MovingTile))
                 //    {
                 //        MovingLocation.terrainFeatures.Remove(MovingTile);
-                //        SMonitor.Log("TF Remove", LogLevel.Debug); // <<< debug >>>
+                //        Monitor.Log("TF Remove", LogLevel.Debug); // <<< debug >>>
                 //    }
                 //}
                 else if (MovingLocation.terrainFeatures.ContainsKey(MovingTile))
@@ -353,6 +382,7 @@ namespace LetsMoveIt
                         hoeDirt.crop?.updateDrawMath(cursorTile);
                     }
                     MovingObject = null;
+                    return;
                 }
             }
             else if (MovingObject is Crop crop)
@@ -362,35 +392,56 @@ namespace LetsMoveIt
                     Game1.playSound("cancel");
                     return;
                 }
+                if (location.objects.TryGetValue(cursorTile, out var isPot))
+                {
+                    if (isPot is IndoorPot pot && pot.hoeDirt.Value.crop is not null)
+                    {
+                        Game1.playSound("cancel");
+                        return;
+                    }
+                }
+                if (MovingLocation.objects.TryGetValue(MovingTile, out var oldPot))
+                {
+                    if (oldPot is IndoorPot pot && pot.hoeDirt.Value.crop is not null)
+                    {
+                        pot.hoeDirt.Value.crop = null;
+                    }
+                    else
+                    {
+                        MovingObject = null;
+                        Game1.playSound("dwop");
+                        return;
+                    }
+                }
+                else if (MovingLocation.terrainFeatures.TryGetValue(MovingTile, out var oldHoeDirt))
+                {
+                    if (oldHoeDirt is HoeDirt hoeDirt && hoeDirt.crop is not null)
+                    {
+                        hoeDirt.crop = null;
+                    }
+                    else
+                    {
+                        MovingObject = null;
+                        Game1.playSound("dwop");
+                        return;
+                    }
+                }
+                else
+                {
+                    MovingObject = null;
+                    Game1.playSound("dwop");
+                    return;
+                }
                 if (location.objects.TryGetValue(cursorTile, out var newPot))
                 {
                     if (newPot is IndoorPot pot)
                     {
-                        if (pot.hoeDirt.Value.crop is not null)
-                        {
-                            Game1.playSound("cancel");
-                            return;
-                        }
                         pot.hoeDirt.Value.crop = crop;
                         pot.hoeDirt.Value.crop.updateDrawMath(cursorTile);
                         MovingObject = null;
                     }
                 }
-                if (MovingLocation.objects.TryGetValue(MovingTile, out var oldPot))
-                {
-                    if (oldPot is IndoorPot pot)
-                    {
-                        pot.hoeDirt.Value.crop = null;
-                    }
-                }
-                if (MovingLocation.terrainFeatures.TryGetValue(MovingTile, out var oldHoeDirt))
-                {
-                    if (oldHoeDirt is HoeDirt hoeDirt)
-                    {
-                        hoeDirt.crop = null;
-                    }
-                }
-                if (location.terrainFeatures.TryGetValue(cursorTile, out var newHoeDirt))
+                else if (location.terrainFeatures.TryGetValue(cursorTile, out var newHoeDirt))
                 {
                     if (newHoeDirt is HoeDirt hoeDirt)
                     {
@@ -432,6 +483,11 @@ namespace LetsMoveIt
             if (MovingObject is null)
             {
                 PlaySound();
+            }
+            else
+            {
+                MovingObject = null;
+                Game1.playSound("dwop");
             }
         }
 
