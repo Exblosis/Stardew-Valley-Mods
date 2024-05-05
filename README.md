@@ -28,6 +28,6 @@
 | `pt` \| Português | [❌](LetsMoveIt/i18n)              |
 | `ru` \| Русский   | [❌](LetsMoveIt/i18n)              |
 | `tr` \| Türkçe    | [❌](LetsMoveIt/i18n)              |
-| `zh` \| 中文       | [❌](LetsMoveIt/i18n)              |
+| `zh` \| 中文       | [✔️](LetsMoveIt/i18n/zh.json)      |
 
 You have custom languages, i can add it to the list.
