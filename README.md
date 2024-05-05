@@ -11,7 +11,8 @@
 > A separate mod for translation is not allowed, people not like to download 100 mods only for translations.
 
 - Only 2 Options to add and edit translation:
-  - You can make a pull request with the file. (recommended)
+  - You can make a pull request with the file. (recommended) <br>
+    Note: For a pull request, you need to fork the repository (add your file) and then you can create a pull request to merge.
   - You can open a issue with the file and add the "translation" label.
 
 | `en = default`    | Let's Move It                      |
