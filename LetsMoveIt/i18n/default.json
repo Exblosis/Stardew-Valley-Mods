@@ -2,7 +2,7 @@
     // Config
     "config.ModEnabled": "Mod Enabled",
     "config.ModKey": "Mod Key",
-    "config.MoveKey": "Move",
+    "config.MoveKey": "Move Key",
     "config.OverwriteKey": "Force placing",
     "config.OverwriteKey.Tooltip": "Warning: Can maybe delete other components!",
     "config.CancelKey": "Cancel",
@@ -10,7 +10,7 @@
     "config.PrioritizeCrops": "Prioritize crops",
     "config.MoveCropWithoutTile": "Move crop separately from farmland.",
     "config.MoveCropWithoutIndoorPot": "Move crop separately from garden pot.",
-    "config.IndoorPot.Note": "Note: Move tea bush from garden pot not work.",
+    "config.IndoorPot.Note": "Note: Tea bush cannot be moved in or out of the garden pot.",
     "config.Page.Components.Link": "Enable & Disable components",
     "config.Page.Components.Link.Tooltip": "CLICK ME",
     "config.Page.Components.Title": "Components",

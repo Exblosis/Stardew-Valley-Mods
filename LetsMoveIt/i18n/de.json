@@ -2,7 +2,7 @@
     // Config
     "config.ModEnabled": "Mod Aktivieren",
     "config.ModKey": "Mod Taste",
-    "config.MoveKey": "Platzieren",
+    "config.MoveKey": "Verschieben", // oder Aktionstaste nennen?
     "config.OverwriteKey": "Platzieren erzwingen",
     "config.OverwriteKey.Tooltip": "Achtung: kann möglicherweise andere Komponenten löschen!",
     "config.CancelKey": "Abbrechen",
@@ -10,7 +10,7 @@
     "config.PrioritizeCrops": "Ernte Priorisieren",
     "config.MoveCropWithoutTile": "Ernte unabhängig vom Ackerboden bewegen.",
     "config.MoveCropWithoutIndoorPot": "Ernte unabhängig vom Gartentopf bewegen.",
-    "config.IndoorPot.Note": "Notiz: Teestrauch kann nicht in/aus dem Gartentopf bewegen werden.",
+    "config.IndoorPot.Note": "Notiz: Teestrauch kann nicht in bzw. aus dem Gartentopf bewegt werden.",
     "config.Page.Components.Link": "Komponenten Aktivieren & Deaktivieren",
     "config.Page.Components.Link.Tooltip": "KLICK MICH",
     "config.Page.Components.Title": "Komponenten",
