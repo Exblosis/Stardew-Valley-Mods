@@ -8,7 +8,7 @@
 > General information about translations: [Modding:Translations](https://stardewvalleywiki.com/Modding:Translations)
 
 > [!CAUTION]
-> A separate mod for translation is not allowed, people not like to download 100 mods only for translations.
+> A separate mod translation on e.g. Nexus is not allowed, people not like to download 100 mod translations.
 
 - Only 2 Options to add and edit translation:
   - You can make a pull request with the file. (recommended) <br>
