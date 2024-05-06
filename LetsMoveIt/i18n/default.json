@@ -24,7 +24,7 @@
     "config.EnableMoveCollectibleObject": "Move collectible objects",
     "config.EnableMoveCollectibleObject.Tooltip": "Flowers, Minerals",
     "config.EnableMoveGeneratedObject": "Move generated objects",
-    "config.EnableMoveGeneratedObject,Tooltip": "Twigs, Weeds, Stones, Ores, Worms",
+    "config.EnableMoveGeneratedObject.Tooltip": "Twigs, Weeds, Stones, Ores, Worms",
     "config.EnableMoveResourceClump": "All big resources",
     "config.EnableMoveGiantCrop": "Move giant crops",
     "config.EnableMoveStump": "Move stumps",
