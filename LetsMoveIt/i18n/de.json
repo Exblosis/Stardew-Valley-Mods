@@ -24,7 +24,7 @@
     "config.EnableMoveCollectibleObject": "Sammelbare Objekte verschieben",
     "config.EnableMoveCollectibleObject.Tooltip": "Blumen, Mineralien",
     "config.EnableMoveGeneratedObject": "Generierte Objekte verschieben",
-    "config.EnableMoveGeneratedObject,Tooltip": "Zweige, Unkraut, Steine, Erze, Würmer",
+    "config.EnableMoveGeneratedObject.Tooltip": "Zweige, Unkraut, Steine, Erze, Würmer",
     "config.EnableMoveResourceClump": "Alle großen Ressourcen",
     "config.EnableMoveGiantCrop": "Riesige Ernte verschieben",
     "config.EnableMoveStump": "Baumstümpfe verschieben",
