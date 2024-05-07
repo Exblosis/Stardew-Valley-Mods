@@ -16,7 +16,7 @@
     "config.Page.Components.Title": "Komponenten",
     "config.EnableMoveBuilding": "Gebäude verschieben",
     "config.EnableMoveEntity": "Entitäten verschieben",
-    "config.EnableMoveEntity.Tooltip": "Dorfbewohner, Tiere, Monster",
+    "config.EnableMoveEntity.Tooltip": "Spieler, Dorfbewohner, Tiere, Monster",
     "config.EnableMoveCrop": "Ernte verschieben",
     "config.EnableMoveObject": "Alle Objekte",
     "config.EnableMovePlaceableObject": "Platzierbare Objekte verschieben",

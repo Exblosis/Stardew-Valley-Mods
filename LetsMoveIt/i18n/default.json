@@ -16,7 +16,7 @@
     "config.Page.Components.Title": "Components",
     "config.EnableMoveBuilding": "Move buildings",
     "config.EnableMoveEntity": "Move entities",
-    "config.EnableMoveEntity.Tooltip": "Villagers, Animals, Monsters",
+    "config.EnableMoveEntity.Tooltip": "Player, Villagers, Animals, Monsters",
     "config.EnableMoveCrop": "Move crops",
     "config.EnableMoveObject": "All objects",
     "config.EnableMovePlaceableObject": "Move placed objects",

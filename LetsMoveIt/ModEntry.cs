@@ -184,7 +184,14 @@ namespace LetsMoveIt
                 else if (MovingObject is Character character)
                 {
                     Rectangle box = character.GetBoundingBox();
-                    character.Sprite.draw(e.SpriteBatch, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 32) + new Vector2((character.GetSpriteWidthForPositioning() * 4 / 2), (box.Height / 2)), box.Center.Y / 10000f, 0, character.ySourceRectOffset, Color.White, false, 4f, 0f, true);
+                    if (character is Farmer farmer)
+                    {
+                        farmer.FarmerRenderer.draw(e.SpriteBatch, farmer, farmer.FarmerSprite.CurrentFrame, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 128) , box.Center.Y / 10000f, farmer.FacingDirection == 3);
+                    }
+                    else
+                    {
+                        character.Sprite.draw(e.SpriteBatch, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 32) + new Vector2(character.GetSpriteWidthForPositioning() * 4 / 2, box.Height / 2), box.Center.Y / 10000f, 0, character.ySourceRectOffset, Color.White, false, 4f, 0f, true);
+                    }
                 }
                 else if (MovingObject is Building building)
                 {

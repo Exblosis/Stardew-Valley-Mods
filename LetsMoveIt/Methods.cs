@@ -32,9 +32,9 @@ namespace LetsMoveIt
             }
             Vector2 cursorTile = Game1.currentCursorTile;
             var mp = Game1.getMousePosition() + new Point(Game1.viewport.Location.X, Game1.viewport.Location.Y);
-            foreach (var c in location.characters)
+            if (Config.EnableMoveEntity)
             {
-                if (Config.EnableMoveEntity)
+                foreach (var c in location.characters)
                 {
                     var bb = c.GetBoundingBox();
                     bb = new Rectangle(bb.Location - new Point(0, 64), new Point(c.Sprite.getWidth() * 4, c.Sprite.getHeight() * 4));
@@ -44,38 +44,43 @@ namespace LetsMoveIt
                         return;
                     }
                 }
-            }
-            if ((location is Farm farm) && Config.EnableMoveEntity)
-            {
-                foreach (var a in farm.animals.Values)
+                if (location is Farm farm)
                 {
-                    if (a.GetBoundingBox().Contains(mp))
+                    foreach (var a in farm.animals.Values)
                     {
-                        Pickup(a, cursorTile, a.currentLocation);
-                        return;
+                        if (a.GetBoundingBox().Contains(mp))
+                        {
+                            Pickup(a, cursorTile, a.currentLocation);
+                            return;
+                        }
                     }
                 }
-            }
-            if ((location is AnimalHouse animalHouse) && Config.EnableMoveEntity)
-            {
-                foreach (var a in animalHouse.animals.Values)
+                if (location is AnimalHouse animalHouse)
                 {
-                    if (a.GetBoundingBox().Contains(mp))
+                    foreach (var a in animalHouse.animals.Values)
                     {
-                        Pickup(a, cursorTile, a.currentLocation);
-                        return;
+                        if (a.GetBoundingBox().Contains(mp))
+                        {
+                            Pickup(a, cursorTile, a.currentLocation);
+                            return;
+                        }
                     }
                 }
-            }
-            if ((location is Forest forest) && Config.EnableMoveEntity)
-            {
-                foreach (var a in forest.marniesLivestock)
+                if (location is Forest forest)
                 {
-                    if (a.GetBoundingBox().Contains(mp))
+                    foreach (var a in forest.marniesLivestock)
                     {
-                        Pickup(a, cursorTile, a.currentLocation);
-                        return;
+                        if (a.GetBoundingBox().Contains(mp))
+                        {
+                            Pickup(a, cursorTile, a.currentLocation);
+                            return;
+                        }
                     }
+                }
+                if (Game1.player.GetBoundingBox().Contains(mp))
+                {
+                    Pickup(Game1.player, cursorTile, location);
+                    return;
                 }
             }
             if (location.objects.TryGetValue(cursorTile, out var obj))
@@ -223,19 +228,33 @@ namespace LetsMoveIt
                     }
                 }
             }
-            if (MovingObject is Character character)
+            if (MovingObject is Farmer farmer)
             {
-                character.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
+                farmer.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
+            }
+            else if (MovingObject is NPC character)
+            {
+                if (location == MovingLocation)
+                {
+                    character.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
+                }
+                else
+                {
+                    Game1.warpCharacter(character, location, (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2() / 64);
+                }
                 if (character is not Monster)
                     character.Halt();
                 MovingObject = null;
-                return;
             }
             else if (MovingObject is FarmAnimal farmAnimal)
             {
+                if(location != MovingLocation)
+                {
+                    MovingLocation.animals.Remove(farmAnimal.myID.Value);
+                    location.animals.TryAdd(farmAnimal.myID.Value, farmAnimal);
+                }
                 farmAnimal.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
                 MovingObject = null;
-                return;
             }
             else if (MovingObject is SObject sObject)
             {
@@ -248,7 +267,6 @@ namespace LetsMoveIt
                     }
                     location.objects.Add(cursorTile, sObject);
                     MovingObject = null;
-                    return;
                 }
                 else
                 {
@@ -266,7 +284,6 @@ namespace LetsMoveIt
                     {
                         location.resourceClumps[index].netTile.Value = cursorTile;
                         MovingObject = null;
-                        return;
                     }
                     else
                     {
@@ -275,7 +292,6 @@ namespace LetsMoveIt
                         int newIndex = location.resourceClumps.IndexOf(resourceClump);
                         location.resourceClumps[newIndex].netTile.Value = cursorTile;
                         MovingObject = null;
-                        return;
                     }
                 }
                 else
@@ -296,7 +312,6 @@ namespace LetsMoveIt
                         {
                             location.largeTerrainFeatures[index].netTilePosition.Value = cursorTile;
                             MovingObject = null;
-                            return;
                         }
                         else
                         {
@@ -305,7 +320,6 @@ namespace LetsMoveIt
                             int newIndex = location.largeTerrainFeatures.IndexOf(largeTerrainFeature);
                             location.largeTerrainFeatures[newIndex].netTilePosition.Value = cursorTile;
                             MovingObject = null;
-                            return;
                         }
                     }
                     else
@@ -382,7 +396,6 @@ namespace LetsMoveIt
                         hoeDirt.crop?.updateDrawMath(cursorTile);
                     }
                     MovingObject = null;
-                    return;
                 }
             }
             else if (MovingObject is Crop crop)
