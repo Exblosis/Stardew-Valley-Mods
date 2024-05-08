@@ -16,7 +16,7 @@
     "config.Page.Components.Title": "细项",
     "config.EnableMoveBuilding": "移动建筑",
     "config.EnableMoveEntity": "移动实体",
-    "config.EnableMoveEntity.Tooltip": "玩家, 村民、动物、怪物",
+    "config.EnableMoveEntity.Tooltip": "玩家、村民、动物、怪物",
     "config.EnableMoveCrop": "移动作物",
     "config.EnableMoveObject": "所有物品",
     "config.EnableMovePlaceableObject": "移动放置的物品",
