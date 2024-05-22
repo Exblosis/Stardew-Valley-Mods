@@ -7,18 +7,18 @@ using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using SObject = StardewValley.Object;
 
-namespace LetsMoveIt.TileData
+namespace LetsMoveIt.TargetData
 {
-    internal partial class Tile
+    internal partial class Target
     {
         public static void Render(RenderedWorldEventArgs e, GameLocation location, Vector2 tile)
         {
             try
             {
                 BoundingBoxTile.Clear();
-                if (TileObject is ResourceClump resourceClump)
+                if (TargetObject is ResourceClump resourceClump)
                 {
-                    if (TileObject is GiantCrop giantCrop)
+                    if (TargetObject is GiantCrop giantCrop)
                     {
                         var data = giantCrop.GetData();
                         //Monitor.Log("Data: " + data.TileSize, LogLevel.Debug); // <<< debug >>>
@@ -50,7 +50,7 @@ namespace LetsMoveIt.TileData
                         }
                     }
                 }
-                else if (TileObject is TerrainFeature terrainFeature)
+                else if (TargetObject is TerrainFeature terrainFeature)
                 {
                     var tf = terrainFeature.getBoundingBox();
                     for (int x_offset = 0; x_offset < tf.Width / 64; x_offset++)
@@ -58,20 +58,20 @@ namespace LetsMoveIt.TileData
                         BoundingBoxTile.Add(tile + new Vector2(x_offset, 0));
                         e.SpriteBatch.Draw(Game1.mouseCursors, Mod1.LocalCursorTile(x_offset * 64), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                     }
-                    if (TileObject is Bush bush)
+                    if (TargetObject is Bush bush)
                     {
                         Texture2D texture = Game1.content.Load<Texture2D>("TileSheets\\bushes");
                         SpriteEffects flipped = bush.flipped.Value ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
                         int tileOffset = (bush.sourceRect.Height / 16 - 1) * -64;
                         e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(y: tileOffset), bush.sourceRect.Value, Color.White * 0.6f, 0f, Vector2.Zero, 4f, flipped, 1);
                     }
-                    else if (TileObject is Flooring flooring)
+                    else if (TargetObject is Flooring flooring)
                     {
                         Texture2D texture = flooring.GetTexture();
                         Point textureCorner = flooring.GetTextureCorner();
                         e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(), new Rectangle(textureCorner.X, textureCorner.Y, 16, 16), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                     }
-                    else if (TileObject is HoeDirt)
+                    else if (TargetObject is HoeDirt)
                     {
                         Texture2D texture = ((location.Name.Equals("Mountain") || location.Name.Equals("Mine") || (location is MineShaft mineShaft && mineShaft.shouldShowDarkHoeDirt()) || location is VolcanoDungeon) ? Game1.content.Load<Texture2D>("TerrainFeatures\\hoeDirtDark") : Game1.content.Load<Texture2D>("TerrainFeatures\\hoeDirt"));
                         if ((location.GetSeason() == Season.Winter && !location.SeedsIgnoreSeasonsHere() && location is not MineShaft) || (location is MineShaft mineShaft2 && mineShaft2.shouldUseSnowTextureHoeDirt()))
@@ -80,13 +80,13 @@ namespace LetsMoveIt.TileData
                         }
                         e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(), new Rectangle(0, 0, 16, 16), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                     }
-                    else if (TileObject is Grass grass)
+                    else if (TargetObject is Grass grass)
                     {
                         Texture2D texture = grass.texture.Value;
                         int grassSourceOffset = grass.grassSourceOffset.Value;
                         e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(y: -16), new Rectangle(0, grassSourceOffset, 15, 20), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                     }
-                    else if (TileObject is FruitTree fruitTree)
+                    else if (TargetObject is FruitTree fruitTree)
                     {
                         Texture2D texture = fruitTree.texture;
                         SpriteEffects flipped = fruitTree.flipped.Value ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
@@ -103,7 +103,7 @@ namespace LetsMoveIt.TileData
                             e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(-64, -256), new Rectangle(((flag ? 1 : seasonIndexForLocation) + System.Math.Min(growthStage, 4)) * 48, spriteRowNumber * 5 * 16, 48, 80), Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
                         }
                     }
-                    else if (TileObject is Tree tree)
+                    else if (TargetObject is Tree tree)
                     {
                         Texture2D texture = tree.texture.Value;
                         Rectangle treeTopSourceRect = new(0, 0, 48, 96);
@@ -138,27 +138,37 @@ namespace LetsMoveIt.TileData
                         }
                     }
                 }
-                else if (TileObject is Crop crop)
+                else if (TargetObject is Crop crop)
                 {
-                    crop.drawWithOffset(e.SpriteBatch, tile, Color.White * 0.6f, 0f, new Vector2(32));
+                    if (crop.whichForageCrop.Value == "2")
+                    {
+                        crop.draw(e.SpriteBatch, tile, Color.White * 0.6f, 0f);
+                    }
+                    else
+                    {
+                        crop.drawWithOffset(e.SpriteBatch, tile, Color.White * 0.6f, 0f, new Vector2(32));
+                    }
                 }
-                else if (TileObject is SObject sObject)
+                else if (TargetObject is SObject sObject)
                 {
                     sObject.draw(e.SpriteBatch, (int)tile.X * 64, (int)tile.Y * 64 - (sObject.bigCraftable.Value ? 64 : 0), 1, 0.6f);
                 }
-                else if (TileObject is Character character)
+                else if (TargetObject is Character character)
                 {
                     Rectangle box = character.GetBoundingBox();
-                    if (character is Farmer farmer)
+                    if (TargetObject is Farmer farmer)
                     {
                         farmer.FarmerRenderer.draw(e.SpriteBatch, farmer, farmer.FarmerSprite.CurrentFrame, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 128), box.Center.Y / 10000f, farmer.FacingDirection == 3);
                     }
                     else
                     {
-                        character.Sprite.draw(e.SpriteBatch, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 32) + new Vector2(character.GetSpriteWidthForPositioning() * 4 / 2, box.Height / 2), box.Center.Y / 10000f, 0, character.ySourceRectOffset, Color.White, false, 4f, 0f, true);
+                        bool flip = character.flip;
+                        if (TargetObject is FarmAnimal)
+                            flip = character.FacingDirection == 3;
+                        character.Sprite.draw(e.SpriteBatch, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 32) + new Vector2(character.GetSpriteWidthForPositioning() * 4 / 2, box.Height / 2), box.Center.Y / 10000f, 0, character.ySourceRectOffset, Color.White, flip, 4f, 0f, true);
                     }
                 }
-                else if (TileObject is Building building)
+                else if (TargetObject is Building building)
                 {
                     for (int x_offset = 0; x_offset < building.tilesWide.Value; x_offset++)
                     {

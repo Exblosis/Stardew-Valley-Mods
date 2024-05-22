@@ -1,7 +1,8 @@
-using LetsMoveIt.TileData;
+using LetsMoveIt.TargetData;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Buildings;
 using StardewValley.Menus;
 
 namespace LetsMoveIt
@@ -18,7 +19,7 @@ namespace LetsMoveIt
             Config = helper.ReadConfig<ModConfig>();
             I18n.Init(helper.Translation);
 
-            _ = new Tile(Config, Helper, Monitor);
+            _ = new Target(Config, Helper, Monitor);
 
             if (!Config.ModEnabled)
                 return;
@@ -33,39 +34,60 @@ namespace LetsMoveIt
         {
             if (!Config.ModEnabled)
             {
-                Tile.TileObject = null;
+                Target.TargetObject = null;
                 return;
             }
-            if (Tile.TileObject is null)
+            if (Target.TargetObject is null)
                 return;
-            Tile.Render(e, Game1.currentLocation, Game1.currentCursorTile);
+            Target.Render(e, Game1.currentLocation, Game1.currentCursorTile);
         }
 
         private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)
         {
             if (!Config.ModEnabled || !Context.IsPlayerFree && Game1.activeClickableMenu is not CarpenterMenu)
                 return;
-            if (e.Button == Config.CancelKey && Tile.TileObject is not null)
+            if (e.Button == Config.CancelKey && Target.TargetObject is not null)
             {
-                Tile.PlaySound();
-                Tile.TileObject = null;
+                Target.PlaySound();
+                Target.TargetObject = null;
+                Helper.Input.Suppress(e.Button);
+                return;
+            }
+            if (e.Button == Config.RemoveKey && Target.TargetObject is not null)
+            {
+                string select = I18n.Dialogue("Remove.Select1");
+                if (Target.TargetObject is Character)
+                    select = I18n.Dialogue("Remove.Select2");
+                if (Target.TargetObject is Building)
+                    select = I18n.Dialogue("Remove.Select3");
+                Game1.player.currentLocation.createQuestionDialogue(I18n.Dialogue("Remove", new { select }), Mod1.YesNoResponses(), (Farmer f, string response) =>
+                {
+                    if (response == "Yes")
+                    {
+                        Target.Remove();
+                    }
+                });
                 Helper.Input.Suppress(e.Button);
                 return;
             }
             if (e.Button == Config.MoveKey)
             {
-                Tile.ButtonAction(Game1.currentLocation, Game1.currentCursorTile);
+                Target.ButtonAction(Game1.currentLocation, Game1.currentCursorTile);
             }
         }
 
         private void OnMenuChanged(object? sender, MenuChangedEventArgs e)
         {
-            Tile.TileObject = null;
+            if (Game1.activeClickableMenu is null)
+                return;
+            if (Game1.activeClickableMenu is DialogueBox)
+                return;
+            Target.TargetObject = null;
         }
 
         private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
         {
-            Tile.TileObject = null;
+            Target.TargetObject = null;
         }
 
         private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
@@ -114,11 +136,23 @@ namespace LetsMoveIt
                 getValue: () => Config.CancelKey,
                 setValue: value => Config.CancelKey = value
             );
+            configMenu.AddKeybind(
+                mod: ModManifest,
+                name: () => I18n.Config("RemoveKey"),
+                getValue: () => Config.RemoveKey,
+                setValue: value => Config.RemoveKey = value
+            );
             configMenu.AddTextOption(
                 mod: ModManifest,
                 name: () => I18n.Config("Sound"),
                 getValue: () => Config.Sound,
                 setValue: value => Config.Sound = value
+            );
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => I18n.Config("CopyMode"),
+                getValue: () => Config.CopyMode,
+                setValue: value => Config.CopyMode = value
             );
             // Prioritize Crops
             configMenu.AddSectionTitle(
@@ -137,10 +171,10 @@ namespace LetsMoveIt
                 getValue: () => Config.MoveCropWithoutIndoorPot,
                 setValue: value => Config.MoveCropWithoutIndoorPot = value
             );
-            configMenu.AddParagraph(
-                mod: ModManifest,
-                text: () => I18n.Config("IndoorPot.Note")
-            );
+            //configMenu.AddParagraph(
+            //    mod: ModManifest,
+            //    text: () => I18n.Config("IndoorPot.Note")
+            //);
             // Enable & Disable Components Page
             configMenu.AddPageLink(
                 mod: ModManifest,

@@ -6,11 +6,12 @@
     "config.OverwriteKey": "强制放置修饰键",
     "config.OverwriteKey.Tooltip": "警告：可能会删除其他物件！",
     "config.CancelKey": "取消按键",
+
     "config.Sound": "音效",
     "config.PrioritizeCrops": "作物优先设置",
     "config.MoveCropWithoutTile": "移动作物不连带田地",
-    "config.MoveCropWithoutIndoorPot": "移动作物不连带花盆",
-    "config.IndoorPot.Note": "注意：茶树不能从花盆上移走或移入",
+    "config.MoveCropWithoutIndoorPot": "移动作物不连带花盆", // <--- add tea bush: "crop and tea bush"
+    //"config.IndoorPot.Note": "注意：茶树不能从花盆上移走或移入",
     "config.Page.Components.Link": "启用或禁用细项",
     "config.Page.Components.Link.Tooltip": "具体细项设置",
     "config.Page.Components.Title": "细项",
@@ -37,5 +38,20 @@
     "config.EnableMoveFruitTree": "移动果树",
     "config.EnableMoveGrass": "移动牧草",
     "config.EnableMoveFarmland": "移动农田",
-    "config.EnableMoveBush": "移动灌木"
+    "config.EnableMoveBush": "移动灌木",
+
+    // TODO
+    "config.RemoveKey": "Remove",
+    "config.CopyMode": "Copy instead of Move",
+
+    // Dialogue
+    "dialogue.Remove": "Do you really want to {{select}} it? It can no longer be undone!",
+    "dialogue.Remove.Select1": "remove",
+    "dialogue.Remove.Select2": "kill",
+    "dialogue.Remove.Select3": "demolish",
+
+    // Message
+    "message.OnlyHost": "Only the farm owner can do this!",
+    "message.BuildingIsFull": "This animal's building is full!",
+    "message.NotImplemented": "Not implemented!"
 }

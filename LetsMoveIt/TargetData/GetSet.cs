@@ -1,20 +1,18 @@
-using System;
 using Microsoft.Xna.Framework;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 
-namespace LetsMoveIt.TileData
+namespace LetsMoveIt.TargetData
 {
-    internal partial class Tile
+    internal partial class Target
     {
-        /// <summary>Get the target tile</summary>
+        /// <summary>Get target.</summary>
         /// <param name="location">The current location.</param>
         /// <param name="tile">The current tile position.</param>
         /// <param name="map">The current map position.</param>
-        public static void GetTarget(GameLocation location, Vector2 tile, Point map)
+        public static void Get(GameLocation location, Vector2 tile, Point map)
         {
             if (Config.EnableMoveEntity)
             {
@@ -24,7 +22,7 @@ namespace LetsMoveIt.TileData
                     bb = new Rectangle(bb.Location - new Point(0, 64), new Point(c.Sprite.getWidth() * 4, c.Sprite.getHeight() * 4));
                     if (bb.Contains(map))
                     {
-                        SetTarget(c, c.currentLocation, tile);
+                        Set(c, c.currentLocation, tile);
                         return;
                     }
                 }
@@ -34,7 +32,7 @@ namespace LetsMoveIt.TileData
                     {
                         if (a.GetBoundingBox().Contains(map))
                         {
-                            SetTarget(a, a.currentLocation, tile);
+                            Set(a, a.currentLocation, tile);
                             return;
                         }
                     }
@@ -45,7 +43,7 @@ namespace LetsMoveIt.TileData
                     {
                         if (a.GetBoundingBox().Contains(map))
                         {
-                            SetTarget(a, a.currentLocation, tile);
+                            Set(a, a.currentLocation, tile);
                             return;
                         }
                     }
@@ -56,14 +54,14 @@ namespace LetsMoveIt.TileData
                     {
                         if (a.GetBoundingBox().Contains(map))
                         {
-                            SetTarget(a, a.currentLocation, tile);
+                            Set(a, a.currentLocation, tile);
                             return;
                         }
                     }
                 }
                 if (Game1.player.GetBoundingBox().Contains(map))
                 {
-                    SetTarget(Game1.player, location, tile);
+                    Set(Game1.player, location, tile);
                     return;
                 }
             }
@@ -74,16 +72,16 @@ namespace LetsMoveIt.TileData
                     //pot.NetFields.GetFields().ToList().ForEach(l =>
                     //    Monitor.Log(l.Name + ": " + l, LogLevel.Debug) // <<< List NetFields >>> <<< debug >>>
                     //);
-                    //if (pot.bush.Value is not null && Config.EnableMoveBush)
-                    //{
-                    //    var b = (obj as IndoorPot).bush.Value;
-                    //    Pickup(b, cursorTile, b.Location);
-                    //    return;
-                    //}
+                    if (pot.bush.Value is not null && Config.EnableMoveBush)
+                    {
+                        var b = pot.bush.Value;
+                        Set(b, b.Location, b.Tile);
+                        return;
+                    }
                     if (pot.hoeDirt.Value.crop is not null && Config.EnableMoveCrop)
                     {
                         var cp = pot.hoeDirt.Value.crop;
-                        SetTarget(cp, cp.currentLocation, cp.tilePosition);
+                        Set(cp, cp.currentLocation, cp.tilePosition);
                         return;
                     }
                 }
@@ -97,7 +95,7 @@ namespace LetsMoveIt.TileData
                 if (!obj.isPlaceable() && !obj.IsSpawnedObject && !Config.EnableMoveGeneratedObject)
                     return;
 
-                SetTarget(obj.Name, obj, obj.Location, obj.TileLocation);
+                Set(obj, obj.Location, obj.TileLocation);
                 return;
             }
             foreach (var rc in location.resourceClumps)
@@ -116,15 +114,14 @@ namespace LetsMoveIt.TileData
                     if ((rcIndex is ResourceClump.meteoriteIndex) && !Config.EnableMoveMeteorite)
                         return;
 
-                    var rcGuid = location.resourceClumps.GuidOf(rc);
-                    SetTarget(rcGuid, rc, rc.Location, rc.Tile);
+                    Set(rc, rc.Location, rc.Tile);
                     return;
                 }
             }
             if (location.isCropAtTile((int)tile.X, (int)tile.Y) && Config.MoveCropWithoutTile && Config.EnableMoveCrop)
             {
                 var cp = ((HoeDirt)location.terrainFeatures[tile]).crop;
-                SetTarget(cp, cp.currentLocation, cp.tilePosition);
+                Set(cp, cp.currentLocation, cp.tilePosition);
                 return;
             }
             if (location.largeTerrainFeatures is not null && Config.EnableMoveTerrainFeature)
@@ -136,7 +133,7 @@ namespace LetsMoveIt.TileData
                         if ((ltf is Bush) && !Config.EnableMoveBush)
                             return;
 
-                        SetTarget(ltf, ltf.Location, ltf.Tile);
+                        Set(ltf, ltf.Location, ltf.Tile);
                         return;
                     }
                 }
@@ -156,7 +153,7 @@ namespace LetsMoveIt.TileData
                 if ((tf is Bush) && !Config.EnableMoveBush) // Tea Bush
                     return;
 
-                SetTarget(tf, tf.Location, tf.Tile);
+                Set(tf, tf.Location, tf.Tile);
                 return;
             }
             if (location.IsTileOccupiedBy(tile, CollisionMask.Buildings) && Config.EnableMoveBuilding)
@@ -164,34 +161,33 @@ namespace LetsMoveIt.TileData
                 var building = location.getBuildingAt(tile);
                 if (building != null)
                 {
-                    Vector2 buildingTile = new Vector2(building.tileX.Value, building.tileY.Value);
-                    SetTarget(building, location, tile, tile - buildingTile);
+                    Vector2 buildingTile = new(building.tileX.Value, building.tileY.Value);
+                    Set(building.buildingType.Value, building, location, tile, tile - buildingTile);
                     return;
                 }
             }
         }
 
-        private static void SetTarget(object obj, GameLocation lastLocation, Vector2 cursorTile, Vector2? offset = null)
+        /// <summary>Set target</summary>
+        private static void Set(object obj, GameLocation lastLocation, Vector2 cursorTile, Vector2? offset = null)
         {
-            SetTarget(null, null, obj, lastLocation, cursorTile, offset ?? Vector2.Zero);
+            Set(null, obj, lastLocation, cursorTile, offset ?? Vector2.Zero);
         }
-        private static void SetTarget(string? name, object obj, GameLocation lastLocation, Vector2 cursorTile)
+        //private static void SetTarget(string? name, object obj, GameLocation lastLocation, Vector2 cursorTile)
+        //{
+        //    SetTarget(name, null, obj, lastLocation, cursorTile, Vector2.Zero);
+        //}
+        //private static void SetTarget(Guid guid, object obj, GameLocation lastLocation, Vector2 cursorTile)
+        //{
+        //    SetTarget(null, guid, obj, lastLocation, cursorTile, Vector2.Zero);
+        //}
+        private static void Set(string? name, object obj, GameLocation lastLocation, Vector2 cursorTile, Vector2 offset)
         {
-            SetTarget(name, null, obj, lastLocation, cursorTile, Vector2.Zero);
-        }
-        private static void SetTarget(Guid guid, object obj, GameLocation lastLocation, Vector2 cursorTile)
-        {
-            SetTarget(null, guid, obj, lastLocation, cursorTile, Vector2.Zero);
-        }
-        private static void SetTarget(string? name, Guid? guid, object obj, GameLocation lastLocation, Vector2 cursorTile, Vector2 offset)
-        {
-            TileName = name;
-            TileGuid = guid;
-            TileObject = obj;
-            TileLocation = lastLocation;
+            Name = name;
+            TargetObject = obj;
+            TargetLocation = lastLocation;
             TilePosition = cursorTile;
             TileOffset = offset;
-            //Monitor.Log($"Picked up {obj}", LogLevel.Info); // <<< debug >>>
             Helper.Input.Suppress(Config.MoveKey);
             PlaySound();
         }

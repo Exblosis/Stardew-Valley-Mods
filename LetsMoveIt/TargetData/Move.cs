@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Buildings;
@@ -8,31 +7,32 @@ using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using SObject = StardewValley.Object;
 
-namespace LetsMoveIt.TileData
+namespace LetsMoveIt.TargetData
 {
-    internal partial class Tile
+    internal partial class Target
     {
-        /// <summary>Place Object</summary>
+        /// <summary>Move the current target.</summary>
         /// <param name="location">The current location.</param>
         /// <param name="tile">The current tile position.</param>
         /// <param name="overwriteTile">To Overwrite existing Object.</param>
-        public static void MoveObject(GameLocation location, Vector2 tile, bool overwriteTile)
+        public static void MoveTo(GameLocation location, Vector2 tile, bool overwriteTile)
         {
             if (!Config.ModEnabled)
             {
-                TileObject = null;
+                TargetObject = null;
                 return;
             }
-            if (TileObject is null)
+            if (TargetObject is null)
                 return;
-            
-            if (TileObject is Farmer farmer)
+
+            if (TargetObject is Farmer farmer)
             {
                 farmer.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
+                TargetObject = null;
             }
-            else if (TileObject is NPC character)
+            else if (TargetObject is NPC character)
             {
-                if (location == TileLocation)
+                if (location == TargetLocation)
                 {
                     character.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
                 }
@@ -42,136 +42,143 @@ namespace LetsMoveIt.TileData
                 }
                 if (character is not Monster)
                     character.Halt();
-                TileObject = null;
+                TargetObject = null;
             }
-            else if (TileObject is FarmAnimal farmAnimal)
+            else if (TargetObject is FarmAnimal farmAnimal)
             {
-                if (location != TileLocation)
+                if (location != TargetLocation)
                 {
-                    TileLocation.animals.Remove(farmAnimal.myID.Value);
+                    TargetLocation.animals.Remove(farmAnimal.myID.Value);
                     location.animals.TryAdd(farmAnimal.myID.Value, farmAnimal);
                 }
                 farmAnimal.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
-                TileObject = null;
+                TargetObject = null;
             }
-            else if (TileObject is SObject sObject)
+            else if (TargetObject is SObject sObject)
             {
-                if (TileLocation.objects.ContainsKey(TilePosition))
+                if (TargetLocation.objects.ContainsKey(TilePosition))
                 {
-                    TileLocation.objects.Remove(TilePosition);
+                    TargetLocation.objects.Remove(TilePosition);
                     if (location.objects.ContainsKey(tile))
                     {
                         location.objects.Remove(tile);
                     }
                     location.objects.Add(tile, sObject);
-                    TileObject = null;
+                    TargetObject = null;
                 }
                 else
                 {
-                    TileObject = null;
+                    TargetObject = null;
                     Game1.playSound("dwop");
                     return;
                 }
             }
-            else if (TileObject is ResourceClump resourceClump)
+            else if (TargetObject is ResourceClump resourceClump)
             {
-                int index = TileLocation.resourceClumps.IndexOf(resourceClump);
+                int index = TargetLocation.resourceClumps.IndexOf(resourceClump);
                 if (index >= 0)
                 {
-                    if (location == TileLocation)
+                    if (location == TargetLocation)
                     {
                         location.resourceClumps[index].netTile.Value = tile;
-                        TileObject = null;
+                        TargetObject = null;
                     }
                     else
                     {
-                        TileLocation.resourceClumps.Remove(resourceClump);
+                        TargetLocation.resourceClumps.Remove(resourceClump);
                         location.resourceClumps.Add(resourceClump);
                         int newIndex = location.resourceClumps.IndexOf(resourceClump);
                         location.resourceClumps[newIndex].netTile.Value = tile;
-                        TileObject = null;
+                        TargetObject = null;
                     }
                 }
                 else
                 {
-                    TileObject = null;
+                    TargetObject = null;
                     Game1.playSound("dwop");
                     return;
                 }
             }
-            else if (TileObject is TerrainFeature terrainFeature)
+            else if (TargetObject is TerrainFeature terrainFeature)
             {
-                if (TileObject is LargeTerrainFeature largeTerrainFeature && TileLocation.largeTerrainFeatures.Contains(largeTerrainFeature))
+                if (TargetObject is Bush bush && bush.size.Value == 3)
                 {
-                    int index = TileLocation.largeTerrainFeatures.IndexOf(largeTerrainFeature);
+                    if (location.objects.TryGetValue(tile, out var obj))
+                    {
+                        if (obj is IndoorPot pot)
+                        {
+                            if (pot.bush.Value is not null || pot.hoeDirt.Value.crop is not null)
+                            {
+                                Game1.playSound("cancel");
+                                return;
+                            }
+                        }
+                    }
+                    if (TargetLocation.objects.TryGetValue(TilePosition, out var obj1) && obj1 is IndoorPot pot1 && pot1.bush.Value is not null)
+                    {
+                        pot1.bush.Value = null;
+                    }
+                    else if (TargetLocation.terrainFeatures.ContainsKey(TilePosition))
+                    {
+                        TargetLocation.terrainFeatures.Remove(TilePosition);
+                    }
+                    else
+                    {
+                        TargetObject = null;
+                        Game1.playSound("dwop");
+                        return;
+                    }
+                    if (location.objects.TryGetValue(tile, out var obj2) && obj2 is IndoorPot pot2)
+                    {
+                        bush.inPot.Value = true;
+                        bush.netTilePosition.Value = tile;
+                        pot2.bush.Value = bush;
+                        TargetObject = null;
+                    }
+                    else
+                    {
+                        if (bush.inPot.Value)
+                        {
+                            bush.inPot.Value = false;
+                            bush.GetType().GetField("yDrawOffset", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(bush, 0f);
+                        }
+                        if (location.terrainFeatures.ContainsKey(tile))
+                        {
+                            location.terrainFeatures.Remove(tile);
+                        }
+                        location.terrainFeatures.Add(tile, terrainFeature);
+                        TargetObject = null;
+                    }
+                }
+                else if (TargetObject is LargeTerrainFeature largeTerrainFeature && TargetLocation.largeTerrainFeatures.Contains(largeTerrainFeature))
+                {
+                    int index = TargetLocation.largeTerrainFeatures.IndexOf(largeTerrainFeature);
                     if (index >= 0)
                     {
-                        if (location == TileLocation)
+                        if (location == TargetLocation)
                         {
                             location.largeTerrainFeatures[index].netTilePosition.Value = tile;
-                            TileObject = null;
+                            TargetObject = null;
                         }
                         else
                         {
-                            TileLocation.largeTerrainFeatures.Remove(largeTerrainFeature);
+                            TargetLocation.largeTerrainFeatures.Remove(largeTerrainFeature);
                             location.largeTerrainFeatures.Add(largeTerrainFeature);
                             int newIndex = location.largeTerrainFeatures.IndexOf(largeTerrainFeature);
                             location.largeTerrainFeatures[newIndex].netTilePosition.Value = tile;
-                            TileObject = null;
+                            TargetObject = null;
                         }
                     }
                     else
                     {
-                        TileObject = null;
+                        TargetObject = null;
                         Game1.playSound("dwop");
                         return;
                     }
                 }
-                //else if (MovingObject is Bush bush)
-                //{
-                //    if (location.objects.TryGetValue(cursorTile, out var newObj))
-                //    {
-                //        if (newObj is IndoorPot pot)
-                //        {
-                //            if (pot.bush.Value is not null)
-                //            {
-                //                Game1.playSound("cancel");
-                //                return;
-                //            }
-                //            pot.bush.Value = bush;
-                //            pot.bush.Value.netTilePosition.Value = cursorTile;
-                //            MovingObject = null;
-                //            Monitor.Log("IP Place", LogLevel.Debug); // <<< debug >>>
-                //        }
-                //    }
-                //    else
-                //    {
-                //        if (location.terrainFeatures.ContainsKey(cursorTile))
-                //        {
-                //            location.terrainFeatures.Remove(cursorTile);
-                //        }
-                //        bush.inPot.Value = false;
-                //        location.terrainFeatures.Add(cursorTile, bush);
-                //        MovingObject = null;
-                //        Monitor.Log("TF Place", LogLevel.Debug); // <<< debug >>>
-                //    }
-                //    if (MovingLocation.objects.TryGetValue(MovingTile, out var oldOpj))
-                //    {
-                //        if (oldOpj is IndoorPot pot)
-                //        {
-                //            pot.bush.Value = null;
-                //            Monitor.Log("IP Remove", LogLevel.Debug); // <<< debug >>>
-                //        }
-                //    }
-                //    if (MovingLocation.terrainFeatures.ContainsKey(MovingTile))
-                //    {
-                //        MovingLocation.terrainFeatures.Remove(MovingTile);
-                //        Monitor.Log("TF Remove", LogLevel.Debug); // <<< debug >>>
-                //    }
-                //}
-                else if (TileLocation.terrainFeatures.ContainsKey(TilePosition))
+                else if (TargetLocation.terrainFeatures.ContainsKey(TilePosition))
                 {
-                    TileLocation.terrainFeatures.Remove(TilePosition);
+                    TargetLocation.terrainFeatures.Remove(TilePosition);
                     if (location.terrainFeatures.ContainsKey(tile))
                     {
                         location.terrainFeatures.Remove(tile);
@@ -188,15 +195,15 @@ namespace LetsMoveIt.TileData
                             }
                         }
                     }
-                    if (location.terrainFeatures[tile] is HoeDirt hoeDirt)
+                    if (terrainFeature is HoeDirt hoeDirt)
                     {
                         hoeDirt.updateNeighbors();
                         hoeDirt.crop?.updateDrawMath(tile);
                     }
-                    TileObject = null;
+                    TargetObject = null;
                 }
             }
-            else if (TileObject is Crop crop)
+            else if (TargetObject is Crop crop)
             {
                 if (location.isCropAtTile((int)tile.X, (int)tile.Y) || !location.isTileHoeDirt(tile))
                 {
@@ -205,13 +212,16 @@ namespace LetsMoveIt.TileData
                 }
                 if (location.objects.TryGetValue(tile, out var isPot))
                 {
-                    if (isPot is IndoorPot pot && pot.hoeDirt.Value.crop is not null)
+                    if (isPot is IndoorPot pot)
                     {
-                        Game1.playSound("cancel");
-                        return;
+                        if (pot.bush.Value is not null || pot.hoeDirt.Value.crop is not null)
+                        {
+                            Game1.playSound("cancel");
+                            return;
+                        }
                     }
                 }
-                if (TileLocation.objects.TryGetValue(TilePosition, out var oldPot))
+                if (TargetLocation.objects.TryGetValue(TilePosition, out var oldPot))
                 {
                     if (oldPot is IndoorPot pot && pot.hoeDirt.Value.crop is not null)
                     {
@@ -219,12 +229,12 @@ namespace LetsMoveIt.TileData
                     }
                     else
                     {
-                        TileObject = null;
+                        TargetObject = null;
                         Game1.playSound("dwop");
                         return;
                     }
                 }
-                else if (TileLocation.terrainFeatures.TryGetValue(TilePosition, out var oldHoeDirt))
+                else if (TargetLocation.terrainFeatures.TryGetValue(TilePosition, out var oldHoeDirt))
                 {
                     if (oldHoeDirt is HoeDirt hoeDirt && hoeDirt.crop is not null)
                     {
@@ -232,14 +242,14 @@ namespace LetsMoveIt.TileData
                     }
                     else
                     {
-                        TileObject = null;
+                        TargetObject = null;
                         Game1.playSound("dwop");
                         return;
                     }
                 }
                 else
                 {
-                    TileObject = null;
+                    TargetObject = null;
                     Game1.playSound("dwop");
                     return;
                 }
@@ -249,7 +259,7 @@ namespace LetsMoveIt.TileData
                     {
                         pot.hoeDirt.Value.crop = crop;
                         pot.hoeDirt.Value.crop.updateDrawMath(tile);
-                        TileObject = null;
+                        TargetObject = null;
                     }
                 }
                 else if (location.terrainFeatures.TryGetValue(tile, out var newHoeDirt))
@@ -258,26 +268,26 @@ namespace LetsMoveIt.TileData
                     {
                         hoeDirt.crop = crop;
                         hoeDirt.crop.updateDrawMath(tile);
-                        TileObject = null;
+                        TargetObject = null;
                     }
                 }
             }
-            else if (TileObject is Building building)
+            else if (TargetObject is Building building)
             {
                 if (location.IsBuildableLocation())
                 {
                     if (location.buildStructure(building, tile - TileOffset, Game1.player, overwriteTile))
                     {
-                        if (TileObject is ShippingBin shippingBin)
+                        if (TargetObject is ShippingBin shippingBin)
                         {
                             shippingBin.initLid();
                         }
-                        if (TileObject is GreenhouseBuilding)
+                        if (TargetObject is GreenhouseBuilding)
                         {
                             Game1.getFarm().greenhouseMoved.Value = true;
                         }
                         building.performActionOnBuildingPlacement();
-                        TileObject = null;
+                        TargetObject = null;
                     }
                     else
                     {
@@ -285,19 +295,14 @@ namespace LetsMoveIt.TileData
                         return;
                     }
                 }
-                else
-                {
-                    Game1.playSound("cancel");
-                    return;
-                }
             }
-            if (TileObject is null)
+            if (TargetObject is null)
             {
                 PlaySound();
             }
             else
             {
-                TileObject = null;
+                TargetObject = null;
                 Game1.playSound("dwop");
             }
         }

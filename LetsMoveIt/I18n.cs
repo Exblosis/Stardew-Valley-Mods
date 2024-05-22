@@ -22,6 +22,22 @@ namespace LetsMoveIt
             return Get("config." + key);
         }
 
+        /// <summary>Translation of Dialogue</summary>
+        /// <param name="key">Translation key: dialogue.{key}</param>
+        /// <param name="tokens">Translation tokens</param>
+        public static string Dialogue(string key, object? tokens = null)
+        {
+            return Get("dialogue." + key, tokens);
+        }
+
+        /// <summary>Translation of Message</summary>
+        /// <param name="key">Translation key: message.{key}</param>
+        /// <param name="tokens">Translation tokens</param>
+        public static string Message(string key, object? tokens = null)
+        {
+            return Get("message." + key, tokens);
+        }
+
         /// <summary>Get the Translation</summary>
         /// <param name="key">Translation key</param>
         /// <param name="tokens">Translation tokens</param>
