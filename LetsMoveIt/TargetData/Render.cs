@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
@@ -11,10 +10,13 @@ namespace LetsMoveIt.TargetData
 {
     internal partial class Target
     {
-        public static void Render(RenderedWorldEventArgs e, GameLocation location, Vector2 tile)
+        public static void Render(SpriteBatch spriteBatch, GameLocation location, Vector2 tile)
         {
             try
             {
+                string toolbarMessage = Config.CancelKey + " " + I18n.Message("Info.Cancel") + " | " + Config.OverwriteKey + " " + I18n.Message("Info.Force") + " | " + Config.RemoveKey + " " + I18n.Message("Info.Remove");
+                Vector2 bounds = Game1.smallFont.MeasureString(toolbarMessage);
+                Utility.drawTextWithColoredShadow(spriteBatch, toolbarMessage, Game1.smallFont, new(Game1.uiViewport.Width / 2 - bounds.X / 2, Game1.uiViewport.Height - 140), Color.White, Color.Black);
                 BoundingBoxTile.Clear();
                 if (TargetObject is ResourceClump resourceClump)
                 {
@@ -26,11 +28,11 @@ namespace LetsMoveIt.TargetData
                         {
                             for (int y_offset = 0; y_offset < data.TileSize.Y; y_offset++)
                             {
-                                e.SpriteBatch.Draw(Game1.mouseCursors, Mod1.LocalCursorTile(x_offset * 64, y_offset * 64), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+                                spriteBatch.Draw(Game1.mouseCursors, Mod1.LocalCursorTile(x_offset * 64, y_offset * 64), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                             }
                         }
                         Texture2D texture = Game1.content.Load<Texture2D>(data.Texture);
-                        e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(y: -64), new Rectangle(data.TexturePosition.X, data.TexturePosition.Y, 16 * data.TileSize.X, 16 * (data.TileSize.Y + 1)), Color.White * 0.6f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+                        spriteBatch.Draw(texture, Mod1.LocalCursorTile(y: -64), new Rectangle(data.TexturePosition.X, data.TexturePosition.Y, 16 * data.TileSize.X, 16 * (data.TileSize.Y + 1)), Color.White * 0.6f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                     }
                     else
                     {
@@ -39,7 +41,7 @@ namespace LetsMoveIt.TargetData
                         Rectangle sourceRect = Game1.getSourceRectForStandardTileSheet(texture, resourceClump.parentSheetIndex.Value, 16, 16);
                         sourceRect.Width = resourceClump.width.Value * 16;
                         sourceRect.Height = resourceClump.height.Value * 16;
-                        e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(), sourceRect, Color.White * 0.6f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+                        spriteBatch.Draw(texture, Mod1.LocalCursorTile(), sourceRect, Color.White * 0.6f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                     }
                     var rc = resourceClump.getBoundingBox();
                     for (int x_offset = 0; x_offset < rc.Width / 64; x_offset++)
@@ -56,20 +58,20 @@ namespace LetsMoveIt.TargetData
                     for (int x_offset = 0; x_offset < tf.Width / 64; x_offset++)
                     {
                         BoundingBoxTile.Add(tile + new Vector2(x_offset, 0));
-                        e.SpriteBatch.Draw(Game1.mouseCursors, Mod1.LocalCursorTile(x_offset * 64), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+                        spriteBatch.Draw(Game1.mouseCursors, Mod1.LocalCursorTile(x_offset * 64), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                     }
                     if (TargetObject is Bush bush)
                     {
                         Texture2D texture = Game1.content.Load<Texture2D>("TileSheets\\bushes");
                         SpriteEffects flipped = bush.flipped.Value ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
                         int tileOffset = (bush.sourceRect.Height / 16 - 1) * -64;
-                        e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(y: tileOffset), bush.sourceRect.Value, Color.White * 0.6f, 0f, Vector2.Zero, 4f, flipped, 1);
+                        spriteBatch.Draw(texture, Mod1.LocalCursorTile(y: tileOffset), bush.sourceRect.Value, Color.White * 0.6f, 0f, Vector2.Zero, 4f, flipped, 1);
                     }
                     else if (TargetObject is Flooring flooring)
                     {
                         Texture2D texture = flooring.GetTexture();
                         Point textureCorner = flooring.GetTextureCorner();
-                        e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(), new Rectangle(textureCorner.X, textureCorner.Y, 16, 16), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+                        spriteBatch.Draw(texture, Mod1.LocalCursorTile(), new Rectangle(textureCorner.X, textureCorner.Y, 16, 16), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                     }
                     else if (TargetObject is HoeDirt)
                     {
@@ -78,13 +80,13 @@ namespace LetsMoveIt.TargetData
                         {
                             texture = Game1.content.Load<Texture2D>("TerrainFeatures\\hoeDirtSnow");
                         }
-                        e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(), new Rectangle(0, 0, 16, 16), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+                        spriteBatch.Draw(texture, Mod1.LocalCursorTile(), new Rectangle(0, 0, 16, 16), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                     }
                     else if (TargetObject is Grass grass)
                     {
                         Texture2D texture = grass.texture.Value;
                         int grassSourceOffset = grass.grassSourceOffset.Value;
-                        e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(y: -16), new Rectangle(0, grassSourceOffset, 15, 20), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+                        spriteBatch.Draw(texture, Mod1.LocalCursorTile(y: -16), new Rectangle(0, grassSourceOffset, 15, 20), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
                     }
                     else if (TargetObject is FruitTree fruitTree)
                     {
@@ -96,11 +98,11 @@ namespace LetsMoveIt.TargetData
                         bool flag = fruitTree.IgnoresSeasonsHere();
                         if (fruitTree.stump.Value)
                         {
-                            e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(-64, -64), new Rectangle(8 * 48, spriteRowNumber * 5 * 16 + 48, 48, 32), Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
+                            spriteBatch.Draw(texture, Mod1.LocalCursorTile(-64, -64), new Rectangle(8 * 48, spriteRowNumber * 5 * 16 + 48, 48, 32), Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
                         }
                         else
                         {
-                            e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(-64, -256), new Rectangle(((flag ? 1 : seasonIndexForLocation) + System.Math.Min(growthStage, 4)) * 48, spriteRowNumber * 5 * 16, 48, 80), Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
+                            spriteBatch.Draw(texture, Mod1.LocalCursorTile(-64, -256), new Rectangle(((flag ? 1 : seasonIndexForLocation) + System.Math.Min(growthStage, 4)) * 48, spriteRowNumber * 5 * 16, 48, 80), Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
                         }
                     }
                     else if (TargetObject is Tree tree)
@@ -118,7 +120,7 @@ namespace LetsMoveIt.TargetData
                         }
                         if (tree.stump.Value)
                         {
-                            e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(y: -64), stumpSourceRect, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
+                            spriteBatch.Draw(texture, Mod1.LocalCursorTile(y: -64), stumpSourceRect, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
                         }
                         else if (growthStage < 5)
                         {
@@ -129,12 +131,12 @@ namespace LetsMoveIt.TargetData
                                 2 => new Rectangle(16, 128, 16, 16),
                                 _ => new Rectangle(0, 96, 16, 32),
                             };
-                            e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(y: growthStage >= 3 ? -64 : 0), value, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
+                            spriteBatch.Draw(texture, Mod1.LocalCursorTile(y: growthStage >= 3 ? -64 : 0), value, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
                         }
                         else
                         {
-                            e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(y: -64), stumpSourceRect, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
-                            e.SpriteBatch.Draw(texture, Mod1.LocalCursorTile(-64, -320), treeTopSourceRect, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
+                            spriteBatch.Draw(texture, Mod1.LocalCursorTile(y: -64), stumpSourceRect, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
+                            spriteBatch.Draw(texture, Mod1.LocalCursorTile(-64, -320), treeTopSourceRect, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
                         }
                     }
                 }
@@ -142,30 +144,30 @@ namespace LetsMoveIt.TargetData
                 {
                     if (crop.whichForageCrop.Value == "2")
                     {
-                        crop.draw(e.SpriteBatch, tile, Color.White * 0.6f, 0f);
+                        crop.draw(spriteBatch, tile, Color.White * 0.6f, 0f);
                     }
                     else
                     {
-                        crop.drawWithOffset(e.SpriteBatch, tile, Color.White * 0.6f, 0f, new Vector2(32));
+                        crop.drawWithOffset(spriteBatch, tile, Color.White * 0.6f, 0f, new Vector2(32));
                     }
                 }
                 else if (TargetObject is SObject sObject)
                 {
-                    sObject.draw(e.SpriteBatch, (int)tile.X * 64, (int)tile.Y * 64 - (sObject.bigCraftable.Value ? 64 : 0), 1, 0.6f);
+                    sObject.draw(spriteBatch, (int)tile.X * 64, (int)tile.Y * 64 - (sObject.bigCraftable.Value ? 64 : 0), 1, 0.6f);
                 }
                 else if (TargetObject is Character character)
                 {
                     Rectangle box = character.GetBoundingBox();
                     if (TargetObject is Farmer farmer)
                     {
-                        farmer.FarmerRenderer.draw(e.SpriteBatch, farmer, farmer.FarmerSprite.CurrentFrame, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 128), box.Center.Y / 10000f, farmer.FacingDirection == 3);
+                        farmer.FarmerRenderer.draw(spriteBatch, farmer, farmer.FarmerSprite.CurrentFrame, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 128), box.Center.Y / 10000f, farmer.FacingDirection == 3);
                     }
                     else
                     {
                         bool flip = character.flip;
                         if (TargetObject is FarmAnimal)
                             flip = character.FacingDirection == 3;
-                        character.Sprite.draw(e.SpriteBatch, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 32) + new Vector2(character.GetSpriteWidthForPositioning() * 4 / 2, box.Height / 2), box.Center.Y / 10000f, 0, character.ySourceRectOffset, Color.White, flip, 4f, 0f, true);
+                        character.Sprite.draw(spriteBatch, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 32) + new Vector2(character.GetSpriteWidthForPositioning() * 4 / 2, box.Height / 2), box.Center.Y / 10000f, 0, character.ySourceRectOffset, Color.White, flip, 4f, 0f, true);
                     }
                 }
                 else if (TargetObject is Building building)
@@ -174,7 +176,7 @@ namespace LetsMoveIt.TargetData
                     {
                         for (int y_offset = 0; y_offset < building.tilesHigh.Value; y_offset++)
                         {
-                            e.SpriteBatch.Draw(Game1.mouseCursors, Mod1.LocalCursorTile(x_offset * 64, y_offset * 64) - TileOffset * 64, new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.01f);
+                            spriteBatch.Draw(Game1.mouseCursors, Mod1.LocalCursorTile(x_offset * 64, y_offset * 64) - TileOffset * 64, new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.01f);
                         }
                     }
                 }

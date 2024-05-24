@@ -25,10 +25,10 @@ namespace LetsMoveIt.TargetData
         private static readonly HashSet<Vector2> BoundingBoxTile = [];
 
         /// <summary>Only for set values</summary>
-        public Target(ModConfig config, IModHelper modHelper, IMonitor monitor)
+        public static void Init(ModConfig config, IModHelper helper, IMonitor monitor)
         {
             Config = config;
-            Helper = modHelper;
+            Helper = helper;
             Monitor = monitor;
         }
 

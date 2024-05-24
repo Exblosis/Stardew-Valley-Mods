@@ -18,8 +18,7 @@ namespace LetsMoveIt
         {
             Config = helper.ReadConfig<ModConfig>();
             I18n.Init(helper.Translation);
-
-            _ = new Target(Config, Helper, Monitor);
+            Target.Init(Config, Helper, Monitor);
 
             if (!Config.ModEnabled)
                 return;
@@ -39,7 +38,7 @@ namespace LetsMoveIt
             }
             if (Target.TargetObject is null)
                 return;
-            Target.Render(e, Game1.currentLocation, Game1.currentCursorTile);
+            Target.Render(e.SpriteBatch, Game1.currentLocation, Game1.currentCursorTile);
         }
 
         private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)

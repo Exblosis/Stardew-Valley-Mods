@@ -45,7 +45,7 @@
     "config.CopyMode": "Copy instead of Move",
 
     // Dialogue
-    "dialogue.Remove": "Do you really want to {{select}} it? It can no longer be undone!",
+    "dialogue.Remove": "Do you really want to {{select}} it? It can no longer be undone!", // not translate the text insert {{select}}
     "dialogue.Remove.Select1": "remove",
     "dialogue.Remove.Select2": "kill",
     "dialogue.Remove.Select3": "demolish",
@@ -53,5 +53,8 @@
     // Message
     "message.OnlyHost": "Only the farm owner can do this!",
     "message.BuildingIsFull": "This animal's building is full!",
-    "message.NotImplemented": "Not implemented!"
+    "message.NotImplemented": "Not implemented!",
+    "message.Info.Cancel": "to cancel",
+    "message.Info.Force": "to force",
+    "message.Info.Remove": "to remove"
 }
