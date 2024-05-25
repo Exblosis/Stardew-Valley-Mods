@@ -27,6 +27,7 @@ namespace LetsMoveIt.TargetData
                 //farmer.health = 0;
                 farmer.faceDirection(2);
                 farmer.FarmerSprite.animateOnce(234, 500f, 1);
+                farmer.performPlayerEmote("angry");
                 Game1.playSound("batFlap");
                 TargetObject = null;
                 return;

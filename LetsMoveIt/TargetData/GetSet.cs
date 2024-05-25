@@ -18,9 +18,9 @@ namespace LetsMoveIt.TargetData
             {
                 foreach (var c in location.characters)
                 {
-                    var bb = c.GetBoundingBox();
-                    bb = new Rectangle(bb.Location - new Point(0, 64), new Point(c.Sprite.getWidth() * 4, c.Sprite.getHeight() * 4));
-                    if (bb.Contains(map))
+                    //var bb = c.GetBoundingBox();
+                    //bb = new Rectangle(bb.Location - new Point(0, 64), new Point(c.Sprite.getWidth() * 4, c.Sprite.getHeight() * 4));
+                    if (c.GetBoundingBox().Contains(map))
                     {
                         Set(c, c.currentLocation, tile);
                         return;

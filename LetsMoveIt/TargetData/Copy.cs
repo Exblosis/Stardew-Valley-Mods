@@ -66,11 +66,9 @@ namespace LetsMoveIt.TargetData
             }
             else if (TargetObject is SObject sObject)
             {
-                //Monitor.Log(": " + sObject.bigCraftable.Value, LogLevel.Debug); // <<< debug >>>
-                if (location.isObjectAtTile((int)tile.X, (int)tile.Y))
+                if (location.objects.ContainsKey(tile))
                 {
-                    Game1.playSound("cancel");
-                    return;
+                    location.objects.Remove(tile);
                 }
                 if (TargetObject is BreakableContainer)
                 {
@@ -97,9 +95,18 @@ namespace LetsMoveIt.TargetData
                     else
                     {
                         sObjectCopy = new(sObject.ItemId, sObject.Stack, sObject.IsRecipe, sObject.Price, sObject.Quality);
-                        sObjectCopy.IsSpawnedObject = sObject.IsSpawnedObject;
                     }
-                    sObjectCopy.placementAction(location, (int)tile.X * 64, (int)tile.Y * 64, Game1.player);
+                    if (sObject.isPlaceable())
+                    {
+                        sObjectCopy.placementAction(location, (int)tile.X * 64, (int)tile.Y * 64, Game1.player);
+                    }
+                    else
+                    {
+                        sObjectCopy.MinutesUntilReady = sObject.MinutesUntilReady;
+                        sObjectCopy.IsSpawnedObject = sObject.IsSpawnedObject;
+                        location.objects.Add(tile, sObjectCopy);
+                        location.playSound("woodyStep", tile);
+                    }
                 }
             }
             else if (TargetObject is ResourceClump resourceClump)
@@ -143,8 +150,7 @@ namespace LetsMoveIt.TargetData
                     {
                         if (location.terrainFeatures.ContainsKey(tile))
                         {
-                            Game1.playSound("cancel");
-                            return;
+                            location.terrainFeatures.Remove(tile);
                         }
                         Bush bushCopy = new(tile, bush.size.Value, location, bush.datePlanted.Value);
                         location.terrainFeatures.Add(tile, bushCopy);
@@ -167,8 +173,7 @@ namespace LetsMoveIt.TargetData
                 {
                     if (location.terrainFeatures.ContainsKey(tile))
                     {
-                        Game1.playSound("cancel");
-                        return;
+                        location.terrainFeatures.Remove(tile);
                     }
                     if (TargetObject is Flooring flooring)
                     {
