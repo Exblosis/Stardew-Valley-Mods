@@ -24,8 +24,12 @@ namespace LetsMoveIt.TargetData
 
             if (TargetObject is Farmer farmer)
             {
-                farmer.health = 0;
+                //farmer.health = 0;
+                farmer.faceDirection(2);
+                farmer.FarmerSprite.animateOnce(234, 500f, 1);
+                Game1.playSound("batFlap");
                 TargetObject = null;
+                return;
             }
             else if (TargetObject is NPC character)
             {
@@ -34,6 +38,10 @@ namespace LetsMoveIt.TargetData
             }
             else if (TargetObject is FarmAnimal farmAnimal)
             {
+                if (farmAnimal.home.GetIndoors() is AnimalHouse animalHouse)
+                {
+                    animalHouse.animalsThatLiveHere.Remove(farmAnimal.myID.Value);
+                }
                 TargetLocation.animals.Remove(farmAnimal.myID.Value);
                 TargetObject = null;
             }
@@ -179,6 +187,8 @@ namespace LetsMoveIt.TargetData
                         {
                             TargetLocation.objects[new Vector2(building.tileX.Value + building.tilesWide.Value / 2, building.tileY.Value + building.tilesHigh.Value / 2)] = chest;
                         }
+                        TargetObject = null;
+                        return;
                     }
                 }
             }
