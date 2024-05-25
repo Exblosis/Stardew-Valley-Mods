@@ -1,4 +1,4 @@
-﻿{
+{
     // Config
     "config.ModEnabled": "启用模组",
     "config.ModKey": "模组修饰键",
@@ -6,14 +6,15 @@
     "config.OverwriteKey": "强制放置修饰键",
     "config.OverwriteKey.Tooltip": "警告：可能会删除其他物件！",
     "config.CancelKey": "取消按键",
-
+    "config.RemoveKey": "移除按键",
+    "config.CopyMode": "复制而非移动",
     "config.Sound": "音效",
-    "config.PrioritizeCrops": "作物优先设置",
+    "config.PrioritizeCrops": "移动作物优先设置",
     "config.MoveCropWithoutTile": "移动作物不连带田地",
-    "config.MoveCropWithoutIndoorPot": "移动作物不连带花盆", // <--- add tea bush: "crop and tea bush"
-    //"config.IndoorPot.Note": "注意：茶树不能从花盆上移走或移入",
+    "config.MoveCropWithoutIndoorPot": "移动作物或茶树不连带花盆",
+    // "config.IndoorPot.Note": "注意：茶树不能从花盆上移入或移出",
     "config.Page.Components.Link": "启用或禁用细项",
-    "config.Page.Components.Link.Tooltip": "具体细项设置",
+    "config.Page.Components.Link.Tooltip": "点击此处进行设置",
     "config.Page.Components.Title": "细项",
     "config.EnableMoveBuilding": "移动建筑",
     "config.EnableMoveEntity": "移动实体",
@@ -21,18 +22,18 @@
     "config.EnableMoveCrop": "移动作物",
     "config.EnableMoveObject": "所有物品",
     "config.EnableMovePlaceableObject": "移动放置的物品",
-    "config.EnableMovePlaceableObject.Tooltip": "制造的物品和矿井木桶等",
+    "config.EnableMovePlaceableObject.Tooltip": "可打造物品、矿井木桶",
     "config.EnableMoveCollectibleObject": "移动可收集物品",
     "config.EnableMoveCollectibleObject.Tooltip": "花、矿物",
     "config.EnableMoveGeneratedObject": "移动生成的物品",
-    "config.EnableMoveGeneratedObject.Tooltip": "树枝、野草、石头、矿石、蠕虫",
+    "config.EnableMoveGeneratedObject.Tooltip": "树枝、杂草、石头、矿石、远古斑点",
     "config.EnableMoveResourceClump": "所有大型资源",
     "config.EnableMoveGiantCrop": "移动巨大作物",
-    "config.EnableMoveStump": "移动树桩",
-    "config.EnableMoveHollowLog": "移动空心原木",
-    "config.EnableMoveBoulder": "移动巨石",
+    "config.EnableMoveStump": "移动大树桩",
+    "config.EnableMoveHollowLog": "移动大圆木",
+    "config.EnableMoveBoulder": "移动圆石",
     "config.EnableMoveMeteorite": "移动陨石",
-    "config.EnableMoveTerrainFeature": "全部地面功能",
+    "config.EnableMoveTerrainFeature": "全部地形功能",
     "config.EnableMoveFlooring": "移动地板",
     "config.EnableMoveTree": "移动树木",
     "config.EnableMoveFruitTree": "移动果树",
@@ -40,21 +41,17 @@
     "config.EnableMoveFarmland": "移动农田",
     "config.EnableMoveBush": "移动灌木",
 
-    // TODO
-    "config.RemoveKey": "Remove",
-    "config.CopyMode": "Copy instead of Move",
-
     // Dialogue
-    "dialogue.Remove": "Do you really want to {{select}} it? It can no longer be undone!", // not translate the text insert {{select}}
-    "dialogue.Remove.Select1": "remove",
-    "dialogue.Remove.Select2": "kill",
-    "dialogue.Remove.Select3": "demolish",
+    "dialogue.Remove": "您真的要{{select}}吗？此操作无法撤销！",
+    "dialogue.Remove.Select1": "移除",
+    "dialogue.Remove.Select2": "消灭",
+    "dialogue.Remove.Select3": "摧毁",
 
     // Message
-    "message.OnlyHost": "Only the farm owner can do this!",
-    "message.BuildingIsFull": "This animal's building is full!",
-    "message.NotImplemented": "Not implemented!",
-    "message.Info.Cancel": "to cancel",
-    "message.Info.Force": "to force",
-    "message.Info.Remove": "to remove"
+    "message.OnlyHost": "只有农场主可以进行此操作！",
+    "message.BuildingIsFull": "此栋动物建筑已满！",
+    "message.NotImplemented": "未能执行！",
+    "message.Info.Cancel": "取消",
+    "message.Info.Force": "强制",
+    "message.Info.Remove": "移除"
 }
