@@ -87,37 +87,39 @@ namespace LetsMoveIt.TargetData
                 }
 
                 if (!Config.EnableMoveObject)
-                    return;
+                    goto SkipObjects;
                 if (obj.isPlaceable() && !Config.EnableMovePlaceableObject)
-                    return;
+                    goto SkipObjects;
                 if (obj.IsSpawnedObject && !Config.EnableMoveCollectibleObject)
-                    return;
+                    goto SkipObjects;
                 if (!obj.isPlaceable() && !obj.IsSpawnedObject && !Config.EnableMoveGeneratedObject)
-                    return;
+                    goto SkipObjects;
 
                 Set(obj, obj.Location, obj.TileLocation);
                 return;
             }
+            SkipObjects:
             foreach (var rc in location.resourceClumps)
             {
                 if (rc.occupiesTile((int)tile.X, (int)tile.Y) && Config.EnableMoveResourceClump)
                 {
                     int rcIndex = rc.parentSheetIndex.Value;
                     if ((rc is GiantCrop) && !Config.EnableMoveGiantCrop)
-                        return;
+                        goto SkipResourceClumps;
                     if ((rcIndex is ResourceClump.stumpIndex) && !Config.EnableMoveStump)
-                        return;
+                        goto SkipResourceClumps;
                     if ((rcIndex is ResourceClump.hollowLogIndex) && !Config.EnableMoveHollowLog)
-                        return;
+                        goto SkipResourceClumps;
                     if ((rcIndex is ResourceClump.boulderIndex or ResourceClump.quarryBoulderIndex or ResourceClump.mineRock1Index or ResourceClump.mineRock2Index or ResourceClump.mineRock3Index or ResourceClump.mineRock4Index) && !Config.EnableMoveBoulder)
-                        return;
+                        goto SkipResourceClumps;
                     if ((rcIndex is ResourceClump.meteoriteIndex) && !Config.EnableMoveMeteorite)
-                        return;
+                        goto SkipResourceClumps;
 
                     Set(rc, rc.Location, rc.Tile);
                     return;
                 }
             }
+            SkipResourceClumps:
             if (location.isCropAtTile((int)tile.X, (int)tile.Y) && Config.MoveCropWithoutTile && Config.EnableMoveCrop)
             {
                 var cp = ((HoeDirt)location.terrainFeatures[tile]).crop;
@@ -131,31 +133,33 @@ namespace LetsMoveIt.TargetData
                     if (ltf.getBoundingBox().Contains((int)tile.X * 64, (int)tile.Y * 64))
                     {
                         if ((ltf is Bush) && !Config.EnableMoveBush)
-                            return;
+                            goto SkipLargeTerrainFeatures;
 
                         Set(ltf, ltf.Location, ltf.Tile);
                         return;
                     }
                 }
             }
+            SkipLargeTerrainFeatures:
             if (location.terrainFeatures.TryGetValue(tile, out var tf) && Config.EnableMoveTerrainFeature)
             {
                 if ((tf is Flooring) && !Config.EnableMoveFlooring)
-                    return;
+                    goto SkipTerrainFeatures;
                 if ((tf is Tree) && !Config.EnableMoveTree)
-                    return;
+                    goto SkipTerrainFeatures;
                 if ((tf is FruitTree) && !Config.EnableMoveFruitTree)
-                    return;
+                    goto SkipTerrainFeatures;
                 if ((tf is Grass) && !Config.EnableMoveGrass)
-                    return;
+                    goto SkipTerrainFeatures;
                 if ((tf is HoeDirt) && !Config.EnableMoveFarmland)
-                    return;
+                    goto SkipTerrainFeatures;
                 if ((tf is Bush) && !Config.EnableMoveBush) // Tea Bush
-                    return;
+                    goto SkipTerrainFeatures;
 
                 Set(tf, tf.Location, tf.Tile);
                 return;
             }
+            SkipTerrainFeatures:
             if (location.IsTileOccupiedBy(tile, CollisionMask.Buildings) && Config.EnableMoveBuilding)
             {
                 var building = location.getBuildingAt(tile);
