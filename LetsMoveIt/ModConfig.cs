@@ -5,7 +5,7 @@ namespace LetsMoveIt
     public class ModConfig
     {
         public bool ModEnabled { get; set; } = true;
-        //public bool ProtectOverwrite { get; set; } = true;
+        public bool CopyMode { get; set; } = false;
 
         //Switch Components
         public bool MoveCropWithoutTile { get; set; } = true;
@@ -44,5 +44,6 @@ namespace LetsMoveIt
         public SButton MoveKey { get; set; } = SButton.MouseLeft;
         public SButton OverwriteKey { get; set; } = SButton.LeftControl;
         public SButton CancelKey { get; set; } = SButton.Escape;
+        public SButton RemoveKey { get; set; } = SButton.Delete;
     }
 }

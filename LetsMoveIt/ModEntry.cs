@@ -1,27 +1,16 @@
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using LetsMoveIt.TargetData;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Buildings;
-using StardewValley.Locations;
 using StardewValley.Menus;
-using StardewValley.TerrainFeatures;
-using SObject = StardewValley.Object;
 
 namespace LetsMoveIt
 {
     /// <summary>The mod entry point.</summary>
-    internal partial class ModEntry : Mod
+    internal class ModEntry : Mod
     {
         private static ModConfig Config = null!;
-
-        private static object? MovingObject;
-        private static GameLocation MovingLocation = null!;
-        private static Vector2 MovingTile;
-        private static Vector2 MovingOffset;
-        private static readonly HashSet<Vector2> BoundingBoxTile = [];
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -29,6 +18,7 @@ namespace LetsMoveIt
         {
             Config = helper.ReadConfig<ModConfig>();
             I18n.Init(helper.Translation);
+            Target.Init(Config, Helper, Monitor);
 
             if (!Config.ModEnabled)
                 return;
@@ -43,202 +33,60 @@ namespace LetsMoveIt
         {
             if (!Config.ModEnabled)
             {
-                MovingObject = null;
+                Target.TargetObject = null;
                 return;
             }
-            if (MovingObject is null)
+            if (Target.TargetObject is null)
                 return;
-            try
-            {
-                BoundingBoxTile.Clear();
-                if (MovingObject is ResourceClump resourceClump)
-                {
-                    if (MovingObject is GiantCrop giantCrop)
-                    {
-                        var data = giantCrop.GetData();
-                        //Monitor.Log("Data: " + data.TileSize, LogLevel.Debug); // <<< debug >>>
-                        for (int x_offset = 0; x_offset < data.TileSize.X; x_offset++)
-                        {
-                            for (int y_offset = 0; y_offset < data.TileSize.Y; y_offset++)
-                            {
-                                e.SpriteBatch.Draw(Game1.mouseCursors, GetGridPosition(x_offset * 64, y_offset * 64), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
-                            }
-                        }
-                        Texture2D texture = Game1.content.Load<Texture2D>(data.Texture);
-                        e.SpriteBatch.Draw(texture, GetGridPosition(yOffset: -64), new Rectangle(data.TexturePosition.X, data.TexturePosition.Y, 16 * data.TileSize.X, 16 * (data.TileSize.Y + 1)), Color.White * 0.6f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
-                    }
-                    else
-                    {
-                        string textureName = resourceClump.textureName.Value;
-                        Texture2D texture = (textureName != null) ? Game1.content.Load<Texture2D>(textureName) : Game1.objectSpriteSheet;
-                        Rectangle sourceRect = Game1.getSourceRectForStandardTileSheet(texture, resourceClump.parentSheetIndex.Value, 16, 16);
-                        sourceRect.Width = resourceClump.width.Value * 16;
-                        sourceRect.Height = resourceClump.height.Value * 16;
-                        e.SpriteBatch.Draw(texture, GetGridPosition(), sourceRect, Color.White * 0.6f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
-                    }
-                    var rc = resourceClump.getBoundingBox();
-                    for (int x_offset = 0; x_offset < rc.Width / 64; x_offset++)
-                    {
-                        for (int y_offset = 0; y_offset < rc.Height / 64; y_offset++)
-                        {
-                            BoundingBoxTile.Add(Game1.currentCursorTile + new Vector2(x_offset, y_offset));
-                        }
-                    }
-                }
-                else if (MovingObject is TerrainFeature terrainFeature)
-                {
-                    var tf = terrainFeature.getBoundingBox();
-                    for (int x_offset = 0; x_offset < tf.Width / 64; x_offset++)
-                    {
-                        BoundingBoxTile.Add(Game1.currentCursorTile + new Vector2(x_offset, 0));
-                        e.SpriteBatch.Draw(Game1.mouseCursors, GetGridPosition(x_offset * 64), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
-                    }
-                    if (MovingObject is Bush bush)
-                    {
-                        Texture2D texture = Game1.content.Load<Texture2D>("TileSheets\\bushes");
-                        SpriteEffects flipped = bush.flipped.Value ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-                        int tileOffset = (bush.sourceRect.Height / 16 - 1) * -64;
-                        e.SpriteBatch.Draw(texture, GetGridPosition(yOffset: tileOffset), bush.sourceRect.Value, Color.White * 0.6f, 0f, Vector2.Zero, 4f, flipped, 1);
-                    }
-                    else if (MovingObject is Flooring flooring)
-                    {
-                        Texture2D texture = flooring.GetTexture();
-                        Point textureCorner = flooring.GetTextureCorner();
-                        e.SpriteBatch.Draw(texture, GetGridPosition(), new Rectangle(textureCorner.X, textureCorner.Y, 16, 16), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
-                    }
-                    else if (MovingObject is HoeDirt)
-                    {
-                        Texture2D texture = ((Game1.currentLocation.Name.Equals("Mountain") || Game1.currentLocation.Name.Equals("Mine") || (Game1.currentLocation is MineShaft mineShaft && mineShaft.shouldShowDarkHoeDirt()) || Game1.currentLocation is VolcanoDungeon) ? Game1.content.Load<Texture2D>("TerrainFeatures\\hoeDirtDark") : Game1.content.Load<Texture2D>("TerrainFeatures\\hoeDirt"));
-                        if ((Game1.currentLocation.GetSeason() == Season.Winter && !Game1.currentLocation.SeedsIgnoreSeasonsHere() && Game1.currentLocation is not MineShaft) || (Game1.currentLocation is MineShaft mineShaft2 && mineShaft2.shouldUseSnowTextureHoeDirt()))
-                        {
-                            texture = Game1.content.Load<Texture2D>("TerrainFeatures\\hoeDirtSnow");
-                        }
-                        e.SpriteBatch.Draw(texture, GetGridPosition(), new Rectangle(0, 0, 16, 16), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
-                    }
-                    else if (MovingObject is Grass grass)
-                    {
-                        Texture2D texture = grass.texture.Value;
-                        int grassSourceOffset = grass.grassSourceOffset.Value;
-                        e.SpriteBatch.Draw(texture, GetGridPosition(yOffset: -16), new Rectangle(0, grassSourceOffset, 15, 20), Color.White * 0.5f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
-                    }
-                    else if (MovingObject is FruitTree fruitTree)
-                    {
-                        Texture2D texture = fruitTree.texture;
-                        SpriteEffects flipped = fruitTree.flipped.Value ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-                        int growthStage = fruitTree.growthStage.Value;
-                        int spriteRowNumber = fruitTree.GetSpriteRowNumber();
-                        int seasonIndexForLocation = Game1.GetSeasonIndexForLocation(Game1.currentLocation);
-                        bool flag = fruitTree.IgnoresSeasonsHere();
-                        if (fruitTree.stump.Value)
-                        {
-                            e.SpriteBatch.Draw(texture, GetGridPosition(-64, -64), new Rectangle(8 * 48, spriteRowNumber * 5 * 16 + 48, 48, 32), Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
-                        }
-                        else
-                        {
-                            e.SpriteBatch.Draw(texture, GetGridPosition(-64, -256), new Rectangle(((flag ? 1 : seasonIndexForLocation) + System.Math.Min(growthStage, 4)) * 48, spriteRowNumber * 5 * 16, 48, 80), Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
-                        }
-                    }
-                    else if (MovingObject is Tree tree)
-                    {
-                        Texture2D texture = tree.texture.Value;
-                        Rectangle treeTopSourceRect = new(0, 0, 48, 96);
-                        Rectangle stumpSourceRect = new(32, 96, 16, 32);
-                        SpriteEffects flipped = tree.flipped.Value ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-                        int growthStage = tree.growthStage.Value;
-                        int seasonIndexForLocation = Game1.GetSeasonIndexForLocation(Game1.currentLocation);
-                        if (tree.hasMoss.Value)
-                        {
-                            treeTopSourceRect.X += 96;
-                            stumpSourceRect.X += 96;
-                        }
-                        if (tree.stump.Value)
-                        {
-                            e.SpriteBatch.Draw(texture, GetGridPosition(yOffset: -64), stumpSourceRect, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
-                        }
-                        else if (growthStage < 5)
-                        {
-                            Rectangle value = growthStage switch
-                            {
-                                0 => new Rectangle(32, 128, 16, 16),
-                                1 => new Rectangle(0, 128, 16, 16),
-                                2 => new Rectangle(16, 128, 16, 16),
-                                _ => new Rectangle(0, 96, 16, 32),
-                            };
-                            e.SpriteBatch.Draw(texture, GetGridPosition(yOffset: growthStage >= 3 ? -64 : 0), value, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
-                        }
-                        else
-                        {
-                            e.SpriteBatch.Draw(texture, GetGridPosition(yOffset: -64), stumpSourceRect, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
-                            e.SpriteBatch.Draw(texture, GetGridPosition(-64, -320), treeTopSourceRect, Color.White * 0.5f, 0f, Vector2.Zero, 4f, flipped, 1);
-                        }
-                    }
-                }
-                else if (MovingObject is Crop crop)
-                {
-                    crop.drawWithOffset(e.SpriteBatch, Game1.currentCursorTile, Color.White * 0.6f, 0f, new Vector2(32));
-                }
-                else if (MovingObject is SObject sObject)
-                {
-                    sObject.draw(e.SpriteBatch, (int)Game1.currentCursorTile.X * 64, (int)Game1.currentCursorTile.Y * 64 - (sObject.bigCraftable.Value ? 64 : 0), 1, 0.6f);
-                }
-                else if (MovingObject is Character character)
-                {
-                    Rectangle box = character.GetBoundingBox();
-                    if (character is Farmer farmer)
-                    {
-                        farmer.FarmerRenderer.draw(e.SpriteBatch, farmer, farmer.FarmerSprite.CurrentFrame, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 128) , box.Center.Y / 10000f, farmer.FacingDirection == 3);
-                    }
-                    else
-                    {
-                        character.Sprite.draw(e.SpriteBatch, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 32) + new Vector2(character.GetSpriteWidthForPositioning() * 4 / 2, box.Height / 2), box.Center.Y / 10000f, 0, character.ySourceRectOffset, Color.White, false, 4f, 0f, true);
-                    }
-                }
-                else if (MovingObject is Building building)
-                {
-                    float x = Game1.currentCursorTile.X - MovingOffset.X / 64;
-                    float y = Game1.currentCursorTile.Y - MovingOffset.Y / 64;
-                    for (int x_offset = 0; x_offset < building.tilesWide.Value; x_offset++)
-                    {
-                        for (int y_offset = 0; y_offset < building.tilesHigh.Value; y_offset++)
-                        {
-                            e.SpriteBatch.Draw(Game1.mouseCursors, new Vector2((x + x_offset) * 64 - Game1.viewport.X, (y + y_offset) * 64 - Game1.viewport.Y), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.01f);
-                        }
-                    }
-                }
-            }
-            catch { }
-        }
-
-        private static Vector2 GetGridPosition(int xOffset = 0, int yOffset = 0)
-        {
-            return Game1.GlobalToLocal(Game1.viewport, new Vector2(xOffset, yOffset) + new Vector2(Game1.currentCursorTile.X * 64f, Game1.currentCursorTile.Y * 64f));
+            Target.Render(e.SpriteBatch, Game1.currentLocation, Game1.currentCursorTile);
         }
 
         private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)
         {
             if (!Config.ModEnabled || !Context.IsPlayerFree && Game1.activeClickableMenu is not CarpenterMenu)
                 return;
-            if (e.Button == Config.CancelKey && MovingObject is not null)
+            if (e.Button == Config.CancelKey && Target.TargetObject is not null)
             {
-                PlaySound();
-                MovingObject = null;
+                Target.PlaySound();
+                Target.TargetObject = null;
+                Helper.Input.Suppress(e.Button);
+                return;
+            }
+            if (e.Button == Config.RemoveKey && Target.TargetObject is not null)
+            {
+                string select = I18n.Dialogue("Remove.Select1");
+                if (Target.TargetObject is Character)
+                    select = I18n.Dialogue("Remove.Select2");
+                if (Target.TargetObject is Building)
+                    select = I18n.Dialogue("Remove.Select3");
+                Game1.player.currentLocation.createQuestionDialogue(I18n.Dialogue("Remove", new { select }), Mod1.YesNoResponses(), (Farmer f, string response) =>
+                {
+                    if (response == "Yes")
+                    {
+                        Target.Remove();
+                    }
+                });
                 Helper.Input.Suppress(e.Button);
                 return;
             }
             if (e.Button == Config.MoveKey)
             {
-                PickupObject(Game1.currentLocation);
+                Target.ButtonAction(Game1.currentLocation, Game1.currentCursorTile);
             }
         }
 
         private void OnMenuChanged(object? sender, MenuChangedEventArgs e)
         {
-            MovingObject = null;
+            if (Game1.activeClickableMenu is null)
+                return;
+            if (Game1.activeClickableMenu is DialogueBox)
+                return;
+            Target.TargetObject = null;
         }
 
         private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
         {
-            MovingObject = null;
+            Target.TargetObject = null;
         }
 
         private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
@@ -287,11 +135,23 @@ namespace LetsMoveIt
                 getValue: () => Config.CancelKey,
                 setValue: value => Config.CancelKey = value
             );
+            configMenu.AddKeybind(
+                mod: ModManifest,
+                name: () => I18n.Config("RemoveKey"),
+                getValue: () => Config.RemoveKey,
+                setValue: value => Config.RemoveKey = value
+            );
             configMenu.AddTextOption(
                 mod: ModManifest,
                 name: () => I18n.Config("Sound"),
                 getValue: () => Config.Sound,
                 setValue: value => Config.Sound = value
+            );
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => I18n.Config("CopyMode"),
+                getValue: () => Config.CopyMode,
+                setValue: value => Config.CopyMode = value
             );
             // Prioritize Crops
             configMenu.AddSectionTitle(
@@ -310,10 +170,10 @@ namespace LetsMoveIt
                 getValue: () => Config.MoveCropWithoutIndoorPot,
                 setValue: value => Config.MoveCropWithoutIndoorPot = value
             );
-            configMenu.AddParagraph(
-                mod: ModManifest,
-                text: () => I18n.Config("IndoorPot.Note")
-            );
+            //configMenu.AddParagraph(
+            //    mod: ModManifest,
+            //    text: () => I18n.Config("IndoorPot.Note")
+            //);
             // Enable & Disable Components Page
             configMenu.AddPageLink(
                 mod: ModManifest,

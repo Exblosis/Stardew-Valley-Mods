@@ -2,15 +2,17 @@
     // Config
     "config.ModEnabled": "Mod Aktivieren",
     "config.ModKey": "Mod Taste",
-    "config.MoveKey": "Verschieben", // oder Aktionstaste nennen?
+    "config.MoveKey": "Verschieben",
     "config.OverwriteKey": "Platzieren erzwingen",
     "config.OverwriteKey.Tooltip": "Achtung: kann möglicherweise andere Komponenten löschen!",
     "config.CancelKey": "Abbrechen",
+    "config.RemoveKey": "Löschen",
+    "config.CopyMode": "Kopieren statt verschieben",
     "config.Sound": "Sound",
-    "config.PrioritizeCrops": "Ernte Priorisieren",
-    "config.MoveCropWithoutTile": "Ernte unabhängig vom Ackerboden bewegen.",
-    "config.MoveCropWithoutIndoorPot": "Ernte unabhängig vom Gartentopf bewegen.",
-    "config.IndoorPot.Note": "Notiz: Teestrauch kann nicht in bzw. aus dem Gartentopf bewegt werden.",
+    "config.PrioritizeCrops": "Verschieben der Ernte Priorisieren",
+    "config.MoveCropWithoutTile": "Ernte separat vom Ackerboden",
+    "config.MoveCropWithoutIndoorPot": "Ernte und Teestrauch separat vom Topf",
+    //"config.IndoorPot.Note": "Notiz: Teestrauch kann nicht in bzw. aus dem Gartentopf bewegt werden.",
     "config.Page.Components.Link": "Komponenten Aktivieren & Deaktivieren",
     "config.Page.Components.Link.Tooltip": "KLICK MICH",
     "config.Page.Components.Title": "Komponenten",
@@ -37,5 +39,19 @@
     "config.EnableMoveFruitTree": "Obstbäume verschieben",
     "config.EnableMoveGrass": "Gras verschieben",
     "config.EnableMoveFarmland": "Ackerboden verschieben",
-    "config.EnableMoveBush": "Büsche verschieben"
+    "config.EnableMoveBush": "Büsche verschieben",
+
+    // Dialogue
+    "dialogue.Remove": "Wollen sie es wirklich {{select}}? Es kann nicht mehr rückgängig gemacht werden!",
+    "dialogue.Remove.Select1": "löschen",
+    "dialogue.Remove.Select2": "töten",
+    "dialogue.Remove.Select3": "abreißen",
+
+    // Message
+    "message.OnlyHost": "Das kann nur der Farmbesitzer!",
+    "message.BuildingIsFull": "Das Gebäude dieses Tieres ist voll!",
+    "message.NotImplemented": "Nicht implementiert!",
+    "message.Info.Cancel": "zum abbrechen",
+    "message.Info.Force": "zum erzwingen",
+    "message.Info.Remove": "zum löschen"
 }
