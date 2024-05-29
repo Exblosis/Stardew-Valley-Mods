@@ -1,4 +1,5 @@
 using LetsMoveIt.TargetData;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -26,6 +27,7 @@ namespace LetsMoveIt
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.Display.MenuChanged += OnMenuChanged;
+            helper.Events.Display.RenderingHud += OnRenderingHud;
             helper.Events.Display.RenderedWorld += OnRenderedWorld;
             helper.Events.Input.ButtonPressed += OnButtonPressed;
         }
@@ -39,6 +41,16 @@ namespace LetsMoveIt
             if (Target.TargetObject is null)
                 return;
             Target.Render(e.SpriteBatch, Game1.currentLocation, Game1.currentCursorTile);
+        }
+
+        private void OnRenderingHud(object? sender, RenderingHudEventArgs e)
+        {
+            if (Target.TargetObject is null)
+                return;
+            string toolbarMessage = Config.CancelKey + " " + I18n.Message("Info.Cancel") + " | " + Config.OverwriteKey + " " + I18n.Message("Info.Force") + " | " + Config.RemoveKey + " " + I18n.Message("Info.Remove");
+            Vector2 bounds = Game1.smallFont.MeasureString(toolbarMessage);
+            Vector2 msgPosition = new(Game1.uiViewport.Width / 2 - bounds.X / 2, Game1.uiViewport.Height - 140);
+            Utility.drawTextWithColoredShadow(e.SpriteBatch, toolbarMessage, Game1.smallFont, msgPosition, Color.White, Color.Black);
         }
 
         private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)
