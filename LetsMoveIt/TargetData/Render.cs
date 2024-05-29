@@ -14,9 +14,6 @@ namespace LetsMoveIt.TargetData
         {
             try
             {
-                string toolbarMessage = Config.CancelKey + " " + I18n.Message("Info.Cancel") + " | " + Config.OverwriteKey + " " + I18n.Message("Info.Force") + " | " + Config.RemoveKey + " " + I18n.Message("Info.Remove");
-                Vector2 bounds = Game1.smallFont.MeasureString(toolbarMessage);
-                Utility.drawTextWithColoredShadow(spriteBatch, toolbarMessage, Game1.smallFont, new(Game1.uiViewport.Width / 2 - bounds.X / 2, Game1.uiViewport.Height - 140), Color.White, Color.Black);
                 BoundingBoxTile.Clear();
                 if (TargetObject is ResourceClump resourceClump)
                 {
@@ -153,7 +150,7 @@ namespace LetsMoveIt.TargetData
                 }
                 else if (TargetObject is SObject sObject)
                 {
-                    sObject.draw(spriteBatch, (int)tile.X * 64, (int)tile.Y * 64 - (sObject.bigCraftable.Value ? 64 : 0), 1, 0.6f);
+                    sObject.draw(spriteBatch, (int)tile.X, (int)tile.Y, 0.6f);
                 }
                 else if (TargetObject is Character character)
                 {
@@ -183,6 +180,5 @@ namespace LetsMoveIt.TargetData
             }
             catch { }
         }
-
     }
 }

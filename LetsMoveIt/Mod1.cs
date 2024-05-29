@@ -9,7 +9,7 @@ namespace LetsMoveIt
         /// <summary>Get the local cursor tile with local offset.</summary>
         /// <param name="x">Offset X</param>
         /// <param name="y">Offset Y</param>
-        public static Vector2 LocalCursorTile(int x = 0, int y = 0)
+        public static Vector2 LocalCursorTile(float x = 0, float y = 0)
         {
             return Game1.GlobalToLocal(new Vector2(x, y) + Game1.currentCursorTile * 64);
         }
