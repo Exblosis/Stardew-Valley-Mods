@@ -12,7 +12,6 @@
     "config.PrioritizeCrops": "Moving the crop prioritize",
     "config.MoveCropWithoutTile": "crop separately from farmland",
     "config.MoveCropWithoutIndoorPot": "crop and tea bush separately from pot",
-    // "config.IndoorPot.Note": "Note: Tea bush cannot be moved in or out of the garden pot.",
     "config.Page.Components.Link": "Enable & Disable components",
     "config.Page.Components.Link.Tooltip": "CLICK ME",
     "config.Page.Components.Title": "Components",

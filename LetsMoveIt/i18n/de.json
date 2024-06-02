@@ -12,7 +12,6 @@
     "config.PrioritizeCrops": "Verschieben der Ernte Priorisieren",
     "config.MoveCropWithoutTile": "Ernte separat vom Ackerboden",
     "config.MoveCropWithoutIndoorPot": "Ernte und Teestrauch separat vom Topf",
-    //"config.IndoorPot.Note": "Notiz: Teestrauch kann nicht in bzw. aus dem Gartentopf bewegt werden.",
     "config.Page.Components.Link": "Komponenten Aktivieren & Deaktivieren",
     "config.Page.Components.Link.Tooltip": "KLICK MICH",
     "config.Page.Components.Title": "Komponenten",

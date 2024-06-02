@@ -1,4 +1,4 @@
-{
+﻿{
     // Config
     "config.ModEnabled": "Mod activé",
     "config.ModKey": "Raccourci",
@@ -12,7 +12,6 @@
     "config.PrioritizeCrops": "Prioriser le mouvement des cultures",
     "config.MoveCropWithoutTile": "culture séparément des terres agricoles",
     "config.MoveCropWithoutIndoorPot": "récolte et théier séparément du pot",
-    // "config.IndoorPot.Note": "Note: Tea bush cannot be moved in or out of the garden pot.",
     "config.Page.Components.Link": "Activer et désactiver les composants",
     "config.Page.Components.Link.Tooltip": "CLIQUEZ-MOI",
     "config.Page.Components.Title": "Composants",
