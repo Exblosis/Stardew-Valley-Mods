@@ -16,6 +16,7 @@ namespace LetsMoveIt.TargetData
         private static IMonitor Monitor = null!;
 
         public static string? Name;
+        public static bool MarniesLivestock;
         //public static string? Index;
         //public static Guid? Guid;
         public static object? TargetObject;

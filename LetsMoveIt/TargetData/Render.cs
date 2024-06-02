@@ -164,7 +164,7 @@ namespace LetsMoveIt.TargetData
                         bool flip = character.flip;
                         if (TargetObject is FarmAnimal)
                             flip = character.FacingDirection == 3;
-                        character.Sprite.draw(spriteBatch, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY() - 32) + new Vector2(character.GetSpriteWidthForPositioning() * 4 / 2, box.Height / 2), box.Center.Y / 10000f, 0, character.ySourceRectOffset, Color.White, flip, 4f, 0f, true);
+                        character.Sprite.draw(spriteBatch, new Vector2(Game1.getMouseX() - 32, Game1.getMouseY()) + new Vector2(character.GetSpriteWidthForPositioning() * 4 / 2, box.Height / 2), box.Center.Y / 10000f, 0, character.ySourceRectOffset, Color.White, flip, 4f, 0f, true);
                     }
                 }
                 else if (TargetObject is Building building)

@@ -39,7 +39,11 @@ namespace LetsMoveIt.TargetData
             }
             else if (TargetObject is FarmAnimal farmAnimal)
             {
-                if (farmAnimal.home.GetIndoors() is AnimalHouse animalHouse)
+                if (MarniesLivestock && TargetLocation is Forest forest)
+                {
+                    forest.marniesLivestock.Remove(farmAnimal);
+                }
+                if (farmAnimal.home?.GetIndoors() is AnimalHouse animalHouse)
                 {
                     animalHouse.animalsThatLiveHere.Remove(farmAnimal.myID.Value);
                 }
