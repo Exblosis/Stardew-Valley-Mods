@@ -45,5 +45,6 @@ namespace LetsMoveIt
         public SButton OverwriteKey { get; set; } = SButton.LeftControl;
         public SButton CancelKey { get; set; } = SButton.Escape;
         public SButton RemoveKey { get; set; } = SButton.Delete;
+        public SButton ToggleCopyModeKey { get; set; } = SButton.None;
     }
 }

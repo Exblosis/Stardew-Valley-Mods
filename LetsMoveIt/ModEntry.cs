@@ -57,6 +57,18 @@ namespace LetsMoveIt
         {
             if (!Config.ModEnabled || !Context.IsPlayerFree && Game1.activeClickableMenu is not CarpenterMenu)
                 return;
+            if (Config.ToggleCopyModeKey != SButton.None && e.Button == Config.ToggleCopyModeKey)
+            {
+                Config.CopyMode = !Config.CopyMode;
+                if (Config.CopyMode)
+                {
+                    Game1.playSound("drumkit6");
+                }
+                else
+                {
+                    Game1.playSound("drumkit6", 200);
+                }
+            }
             if (e.Button == Config.CancelKey && Target.TargetObject is not null)
             {
                 Target.PlaySound();
@@ -153,17 +165,23 @@ namespace LetsMoveIt
                 getValue: () => Config.RemoveKey,
                 setValue: value => Config.RemoveKey = value
             );
-            configMenu.AddTextOption(
+            configMenu.AddKeybind(
                 mod: ModManifest,
-                name: () => I18n.Config("Sound"),
-                getValue: () => Config.Sound,
-                setValue: value => Config.Sound = value
+                name: () => I18n.Config("ToggleCopyModeKey"),
+                getValue: () => Config.ToggleCopyModeKey,
+                setValue: value => Config.ToggleCopyModeKey = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => I18n.Config("CopyMode"),
                 getValue: () => Config.CopyMode,
                 setValue: value => Config.CopyMode = value
+            );
+            configMenu.AddTextOption(
+                mod: ModManifest,
+                name: () => I18n.Config("Sound"),
+                getValue: () => Config.Sound,
+                setValue: value => Config.Sound = value
             );
             // Prioritize Crops
             configMenu.AddSectionTitle(

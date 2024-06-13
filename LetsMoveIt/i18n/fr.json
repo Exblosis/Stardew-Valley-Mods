@@ -52,5 +52,9 @@
     "message.NotImplemented": "Pas implémenté !",
     "message.Info.Cancel": "annuler",
     "message.Info.Force": "forcer",
-    "message.Info.Remove": "retirer"
+    "message.Info.Remove": "retirer",
+
+
+    // TODO
+    "config.ToggleCopyModeKey": "Toggle the copy config"
 }

@@ -7,6 +7,7 @@
     "config.OverwriteKey.Tooltip": "Warning: Can maybe delete other components!",
     "config.CancelKey": "Cancel",
     "config.RemoveKey": "Remove",
+    "config.ToggleCopyModeKey": "Toggle the copy config",
     "config.CopyMode": "Copy instead of Move",
     "config.Sound": "Sound",
     "config.PrioritizeCrops": "Moving the crop prioritize",
