@@ -247,6 +247,7 @@ namespace LetsMoveIt.TargetData
                     if (newPot is IndoorPot pot)
                     {
                         pot.hoeDirt.Value.crop = cropCopy;
+                        pot.hoeDirt.Value.applySpeedIncreases(Game1.player);
                         pot.hoeDirt.Value.crop.updateDrawMath(tile);
                     }
                 }
@@ -255,6 +256,7 @@ namespace LetsMoveIt.TargetData
                     if (newHoeDirt is HoeDirt hoeDirt)
                     {
                         hoeDirt.crop = cropCopy;
+                        hoeDirt.applySpeedIncreases(Game1.player);
                         hoeDirt.crop.updateDrawMath(tile);
                     }
                 }

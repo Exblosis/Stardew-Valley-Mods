@@ -271,6 +271,7 @@ namespace LetsMoveIt.TargetData
                     if (newPot is IndoorPot pot)
                     {
                         pot.hoeDirt.Value.crop = crop;
+                        pot.hoeDirt.Value.applySpeedIncreases(Game1.player);
                         pot.hoeDirt.Value.crop.updateDrawMath(tile);
                         TargetObject = null;
                     }
@@ -280,6 +281,7 @@ namespace LetsMoveIt.TargetData
                     if (newHoeDirt is HoeDirt hoeDirt)
                     {
                         hoeDirt.crop = crop;
+                        hoeDirt.applySpeedIncreases(Game1.player);
                         hoeDirt.crop.updateDrawMath(tile);
                         TargetObject = null;
                     }
