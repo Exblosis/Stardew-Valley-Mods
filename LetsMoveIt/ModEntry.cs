@@ -1,5 +1,7 @@
+using System;
 using LetsMoveIt.TargetData;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -12,6 +14,9 @@ namespace LetsMoveIt
     internal class ModEntry : Mod
     {
         private static ModConfig Config = null!;
+
+        //private static bool MultiSelect = false;
+        //private static Vector2 StartCursorTile;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -30,6 +35,7 @@ namespace LetsMoveIt
             helper.Events.Display.RenderingHud += OnRenderingHud;
             helper.Events.Display.RenderedWorld += OnRenderedWorld;
             helper.Events.Input.ButtonPressed += OnButtonPressed;
+            //helper.Events.Input.ButtonReleased += OnButtonReleased;
         }
         private void OnRenderedWorld(object? sender, RenderedWorldEventArgs e)
         {
@@ -38,6 +44,17 @@ namespace LetsMoveIt
                 Target.TargetObject = null;
                 return;
             }
+            //if (Helper.Input.IsDown(Config.ModKey) && MultiSelect)
+            //{
+            //    Rectangle select = new ((int)Math.Min(Game1.currentCursorTile.X, StartCursorTile.X), (int)Math.Min(Game1.currentCursorTile.Y, StartCursorTile.Y), (int)Math.Abs(Game1.currentCursorTile.X - StartCursorTile.X) + 1, (int)Math.Abs(Game1.currentCursorTile.Y - StartCursorTile.Y) + 1);
+            //    for (int x_offset = 0; x_offset < select.Width; x_offset++)
+            //    {
+            //        for (int y_offset = 0; y_offset < select.Height; y_offset++)
+            //        {
+            //            e.SpriteBatch.Draw(Game1.mouseCursors, Game1.GlobalToLocal(new Vector2(select.X, select.Y) * 64 + new Vector2(x_offset, y_offset) * 64), new Rectangle?(new Rectangle(194, 388, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1);
+            //        }
+            //    }
+            //}
             if (Target.TargetObject is null)
                 return;
             Target.Render(e.SpriteBatch, Game1.currentLocation, Game1.currentCursorTile);
@@ -57,6 +74,18 @@ namespace LetsMoveIt
         {
             if (!Config.ModEnabled || !Context.IsPlayerFree && Game1.activeClickableMenu is not CarpenterMenu)
                 return;
+            if (Config.ToggleCopyModeKey != SButton.None && e.Button == Config.ToggleCopyModeKey)
+            {
+                Config.CopyMode = !Config.CopyMode;
+                if (Config.CopyMode)
+                {
+                    Game1.playSound("drumkit6");
+                }
+                else
+                {
+                    Game1.playSound("drumkit6", 200);
+                }
+            }
             if (e.Button == Config.CancelKey && Target.TargetObject is not null)
             {
                 Target.PlaySound();
@@ -83,9 +112,22 @@ namespace LetsMoveIt
             }
             if (e.Button == Config.MoveKey)
             {
+                //if (Helper.Input.IsDown(Config.ModKey))
+                //{
+                //    MultiSelect = true;
+                //    StartCursorTile = Game1.currentCursorTile;
+                //}
                 Target.ButtonAction(Game1.currentLocation, Game1.currentCursorTile);
             }
         }
+
+        //private void OnButtonReleased(object? sender, ButtonReleasedEventArgs e)
+        //{
+        //    if (e.Button == Config.MoveKey)
+        //    {
+        //        MultiSelect = false;
+        //    }
+        //}
 
         private void OnMenuChanged(object? sender, MenuChangedEventArgs e)
         {
@@ -153,17 +195,23 @@ namespace LetsMoveIt
                 getValue: () => Config.RemoveKey,
                 setValue: value => Config.RemoveKey = value
             );
-            configMenu.AddTextOption(
+            configMenu.AddKeybind(
                 mod: ModManifest,
-                name: () => I18n.Config("Sound"),
-                getValue: () => Config.Sound,
-                setValue: value => Config.Sound = value
+                name: () => I18n.Config("ToggleCopyModeKey"),
+                getValue: () => Config.ToggleCopyModeKey,
+                setValue: value => Config.ToggleCopyModeKey = value
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => I18n.Config("CopyMode"),
                 getValue: () => Config.CopyMode,
                 setValue: value => Config.CopyMode = value
+            );
+            configMenu.AddTextOption(
+                mod: ModManifest,
+                name: () => I18n.Config("Sound"),
+                getValue: () => Config.Sound,
+                setValue: value => Config.Sound = value
             );
             // Prioritize Crops
             configMenu.AddSectionTitle(

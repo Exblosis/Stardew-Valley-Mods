@@ -37,31 +37,37 @@ namespace LetsMoveIt.TargetData
             }
             else if (TargetObject is FarmAnimal farmAnimal)
             {
-                if (farmAnimal.home is null)
+                AnimalHouse animalHouse;
+                if (location is AnimalHouse currentHouse && location.Map.Id.Remove(4) == farmAnimal.buildingTypeILiveIn.Value)
+                {
+                    animalHouse = currentHouse;
+                }
+                else if (location is Farm && farmAnimal.home?.GetIndoors() is AnimalHouse thisAnimal)
+                {
+                    animalHouse = thisAnimal;
+                }
+                else
                 {
                     Game1.playSound("cancel");
                     return;
                 }
-                if (farmAnimal.home.GetIndoors() is AnimalHouse animalHouse)
+                if (animalHouse.isFull())
                 {
-                    if (animalHouse.isFull())
-                    {
-                        Game1.addHUDMessage(new(I18n.Message("BuildingIsFull"), 3));
-                        Game1.playSound("cancel");
-                        return;
-                    }
-                    else
-                    {
-                        FarmAnimal farmAnimalCopy = new(farmAnimal.type.Value, Game1.Multiplayer.getNewID(), Game1.player.UniqueMultiplayerID);
-                        if (farmAnimal.isAdult())
-                            farmAnimalCopy.growFully();
-                        farmAnimalCopy.Name = Dialogue.randomName();
-                        farmAnimalCopy.displayName = farmAnimalCopy.Name;
-                        animalHouse.adoptAnimal(farmAnimalCopy);
-                        location.animals.TryAdd(farmAnimalCopy.myID.Value, farmAnimalCopy);
-                        farmAnimalCopy.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
-                        farmAnimalCopy.makeSound();
-                    }
+                    Game1.addHUDMessage(new(I18n.Message("BuildingIsFull"), 3));
+                    Game1.playSound("cancel");
+                    return;
+                }
+                else
+                {
+                    FarmAnimal farmAnimalCopy = new(farmAnimal.type.Value, Game1.Multiplayer.getNewID(), Game1.player.UniqueMultiplayerID);
+                    if (farmAnimal.isAdult())
+                        farmAnimalCopy.growFully();
+                    farmAnimalCopy.Name = Dialogue.randomName();
+                    farmAnimalCopy.displayName = farmAnimalCopy.Name;
+                    animalHouse.adoptAnimal(farmAnimalCopy);
+                    location.animals.TryAdd(farmAnimalCopy.myID.Value, farmAnimalCopy);
+                    farmAnimalCopy.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
+                    farmAnimalCopy.makeSound();
                 }
             }
             else if (TargetObject is SObject sObject)
@@ -241,6 +247,7 @@ namespace LetsMoveIt.TargetData
                     if (newPot is IndoorPot pot)
                     {
                         pot.hoeDirt.Value.crop = cropCopy;
+                        pot.hoeDirt.Value.applySpeedIncreases(Game1.player);
                         pot.hoeDirt.Value.crop.updateDrawMath(tile);
                     }
                 }
@@ -249,6 +256,7 @@ namespace LetsMoveIt.TargetData
                     if (newHoeDirt is HoeDirt hoeDirt)
                     {
                         hoeDirt.crop = cropCopy;
+                        hoeDirt.applySpeedIncreases(Game1.player);
                         hoeDirt.crop.updateDrawMath(tile);
                     }
                 }

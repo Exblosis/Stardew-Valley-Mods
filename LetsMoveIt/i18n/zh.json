@@ -1,4 +1,4 @@
-{
+﻿{
     // Config
     "config.ModEnabled": "启用模组",
     "config.ModKey": "模组修饰键",
@@ -12,7 +12,6 @@
     "config.PrioritizeCrops": "移动作物优先设置",
     "config.MoveCropWithoutTile": "移动作物不连带耕地",
     "config.MoveCropWithoutIndoorPot": "移动作物或茶树不连带花盆",
-    // "config.IndoorPot.Note": "注意：茶树不能从花盆上移入或移出",
     "config.Page.Components.Link": "启用或禁用细项",
     "config.Page.Components.Link.Tooltip": "点击此处进行设置",
     "config.Page.Components.Title": "细项",
@@ -53,5 +52,9 @@
     "message.NotImplemented": "未能执行！",
     "message.Info.Cancel": "取消",
     "message.Info.Force": "强制",
-    "message.Info.Remove": "删除"
+    "message.Info.Remove": "删除",
+
+
+    // TODO
+    "config.ToggleCopyModeKey": "Toggle the copy config"
 }

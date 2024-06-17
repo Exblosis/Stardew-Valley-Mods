@@ -26,26 +26,12 @@ namespace LetsMoveIt.TargetData
                         return;
                     }
                 }
-                if (location is Farm farm)
+                foreach (var a in location.animals.Values)
                 {
-                    foreach (var a in farm.animals.Values)
+                    if (a.GetBoundingBox().Contains(map))
                     {
-                        if (a.GetBoundingBox().Contains(map))
-                        {
-                            Set(a, a.currentLocation, tile);
-                            return;
-                        }
-                    }
-                }
-                if (location is AnimalHouse animalHouse)
-                {
-                    foreach (var a in animalHouse.animals.Values)
-                    {
-                        if (a.GetBoundingBox().Contains(map))
-                        {
-                            Set(a, a.currentLocation, tile);
-                            return;
-                        }
+                        Set(a, a.currentLocation, tile);
+                        return;
                     }
                 }
                 if (location is Forest forest)
@@ -54,7 +40,7 @@ namespace LetsMoveIt.TargetData
                     {
                         if (a.GetBoundingBox().Contains(map))
                         {
-                            Set(a, a.currentLocation, tile);
+                            Set(a, a.currentLocation, tile, true);
                             return;
                         }
                     }
@@ -177,6 +163,10 @@ namespace LetsMoveIt.TargetData
         {
             Set(null, obj, lastLocation, cursorTile, offset ?? Vector2.Zero);
         }
+        private static void Set(object obj, GameLocation lastLocation, Vector2 cursorTile, bool marniesLivestock)
+        {
+            Set(null, obj, lastLocation, cursorTile, Vector2.Zero, marniesLivestock);
+        }
         //private static void SetTarget(string? name, object obj, GameLocation lastLocation, Vector2 cursorTile)
         //{
         //    SetTarget(name, null, obj, lastLocation, cursorTile, Vector2.Zero);
@@ -185,9 +175,10 @@ namespace LetsMoveIt.TargetData
         //{
         //    SetTarget(null, guid, obj, lastLocation, cursorTile, Vector2.Zero);
         //}
-        private static void Set(string? name, object obj, GameLocation lastLocation, Vector2 cursorTile, Vector2 offset)
+        private static void Set(string? name, object obj, GameLocation lastLocation, Vector2 cursorTile, Vector2 offset, bool marniesLivestock = false)
         {
             Name = name;
+            MarniesLivestock = marniesLivestock;
             TargetObject = obj;
             TargetLocation = lastLocation;
             TilePosition = cursorTile;

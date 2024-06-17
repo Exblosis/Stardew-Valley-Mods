@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Buildings;
+using StardewValley.Locations;
 using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
@@ -48,8 +49,20 @@ namespace LetsMoveIt.TargetData
             {
                 if (location != TargetLocation)
                 {
+                    if (MarniesLivestock && TargetLocation is Forest forest)
+                    {
+                        forest.marniesLivestock.Remove(farmAnimal);
+                    }
                     TargetLocation.animals.Remove(farmAnimal.myID.Value);
                     location.animals.TryAdd(farmAnimal.myID.Value, farmAnimal);
+                    if (location is AnimalHouse currentHouse && !currentHouse.isFull() && location.Map.Id.Remove(4) == farmAnimal.buildingTypeILiveIn.Value && location.NameOrUniqueName != farmAnimal.home?.GetIndoors().NameOrUniqueName)
+                    {
+                        if (farmAnimal.home?.GetIndoors() is AnimalHouse animalHouse)
+                        {
+                            animalHouse.animalsThatLiveHere.Remove(farmAnimal.myID.Value);
+                        }
+                        currentHouse.animalsThatLiveHere.Add(farmAnimal.myID.Value);
+                    }
                 }
                 farmAnimal.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
                 TargetObject = null;
@@ -258,6 +271,7 @@ namespace LetsMoveIt.TargetData
                     if (newPot is IndoorPot pot)
                     {
                         pot.hoeDirt.Value.crop = crop;
+                        pot.hoeDirt.Value.applySpeedIncreases(Game1.player);
                         pot.hoeDirt.Value.crop.updateDrawMath(tile);
                         TargetObject = null;
                     }
@@ -267,6 +281,7 @@ namespace LetsMoveIt.TargetData
                     if (newHoeDirt is HoeDirt hoeDirt)
                     {
                         hoeDirt.crop = crop;
+                        hoeDirt.applySpeedIncreases(Game1.player);
                         hoeDirt.crop.updateDrawMath(tile);
                         TargetObject = null;
                     }
