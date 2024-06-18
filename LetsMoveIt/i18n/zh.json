@@ -1,4 +1,4 @@
-﻿{
+{
     // Config
     "config.ModEnabled": "启用模组",
     "config.ModKey": "模组修饰键",
@@ -7,6 +7,7 @@
     "config.OverwriteKey.Tooltip": "警告：可能会删除其他物件！",
     "config.CancelKey": "取消按键",
     "config.RemoveKey": "删除按键",
+    "config.ToggleCopyModeKey": "切换复制设置",
     "config.CopyMode": "复制而非移动",
     "config.Sound": "音效",
     "config.PrioritizeCrops": "移动作物优先设置",
@@ -52,9 +53,5 @@
     "message.NotImplemented": "未能执行！",
     "message.Info.Cancel": "取消",
     "message.Info.Force": "强制",
-    "message.Info.Remove": "删除",
-
-
-    // TODO
-    "config.ToggleCopyModeKey": "Toggle the copy config"
+    "message.Info.Remove": "删除"
 }
