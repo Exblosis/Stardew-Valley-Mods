@@ -12,7 +12,7 @@ namespace LetsMoveIt.TargetData
     internal partial class Target
     {
         /// <summary>Remove the current target.</summary>
-        public static void Remove()
+        public void Remove()
         {
             if (!Config.ModEnabled)
             {
@@ -196,10 +196,6 @@ namespace LetsMoveIt.TargetData
                         return;
                     }
                 }
-            }
-            if (TargetObject is null)
-            {
-                Game1.playSound("trashcan");
             }
         }
     }

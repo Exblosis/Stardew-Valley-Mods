@@ -56,5 +56,7 @@
 
 
     // TODO
-    "config.ToggleCopyModeKey": "Toggle the copy config"
+    "config.ToggleCopyModeKey": "Toggle the copy config",
+    "config.ToggleMultiSelectKey": "Toggle the multi select config",
+    "config.MultiSelect": "Multi select"
 }

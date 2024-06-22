@@ -9,6 +9,8 @@
     "config.RemoveKey": "Remove",
     "config.ToggleCopyModeKey": "Toggle the copy config",
     "config.CopyMode": "Copy instead of Move",
+    "config.ToggleMultiSelectKey": "Toggle the multi select config",
+    "config.MultiSelect": "Multi select",
     "config.Sound": "Sound",
     "config.PrioritizeCrops": "Moving the crop prioritize",
     "config.MoveCropWithoutTile": "crop separately from farmland",

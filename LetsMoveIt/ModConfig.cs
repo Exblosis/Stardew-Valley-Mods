@@ -6,6 +6,7 @@ namespace LetsMoveIt
     {
         public bool ModEnabled { get; set; } = true;
         public bool CopyMode { get; set; } = false;
+        public bool MultiSelect { get; set; } = false;
 
         //Switch Components
         public bool MoveCropWithoutTile { get; set; } = true;
@@ -46,5 +47,6 @@ namespace LetsMoveIt
         public SButton CancelKey { get; set; } = SButton.Escape;
         public SButton RemoveKey { get; set; } = SButton.Delete;
         public SButton ToggleCopyModeKey { get; set; } = SButton.None;
+        public SButton ToggleMultiSelectKey { get; set; } = SButton.None;
     }
 }

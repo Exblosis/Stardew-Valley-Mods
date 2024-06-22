@@ -16,7 +16,7 @@ namespace LetsMoveIt.TargetData
         /// <param name="location">The current location.</param>
         /// <param name="tile">The current tile position.</param>
         /// <param name="overwriteTile">To Overwrite existing Object.</param>
-        public static void MoveTo(GameLocation location, Vector2 tile, bool overwriteTile)
+        public void MoveTo(GameLocation location, Vector2 tile, bool overwriteTile)
         {
             if (!Config.ModEnabled)
             {
@@ -29,6 +29,7 @@ namespace LetsMoveIt.TargetData
             if (TargetObject is Farmer farmer)
             {
                 farmer.Position = (Game1.getMousePosition() + new Point(Game1.viewport.Location.X - 32, Game1.viewport.Location.Y - 32)).ToVector2();
+                Game1.player.forceCanMove();
                 TargetObject = null;
             }
             else if (TargetObject is NPC character)
@@ -311,11 +312,7 @@ namespace LetsMoveIt.TargetData
                     }
                 }
             }
-            if (TargetObject is null)
-            {
-                PlaySound();
-            }
-            else
+            if (TargetObject is not null)
             {
                 TargetObject = null;
                 Game1.playSound("dwop");

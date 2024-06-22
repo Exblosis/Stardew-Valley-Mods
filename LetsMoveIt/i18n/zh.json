@@ -1,4 +1,4 @@
-{
+﻿{
     // Config
     "config.ModEnabled": "启用模组",
     "config.ModKey": "模组修饰键",
@@ -53,5 +53,10 @@
     "message.NotImplemented": "未能执行！",
     "message.Info.Cancel": "取消",
     "message.Info.Force": "强制",
-    "message.Info.Remove": "删除"
+    "message.Info.Remove": "删除",
+
+
+    //TODO
+    "config.ToggleMultiSelectKey": "Toggle the multi select config",
+    "config.MultiSelect": "Multi select"
 }

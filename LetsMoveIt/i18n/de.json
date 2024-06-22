@@ -9,6 +9,8 @@
     "config.RemoveKey": "Löschen",
     "config.ToggleCopyModeKey": "Umschalten der kopier config",
     "config.CopyMode": "Kopieren statt verschieben",
+    "config.ToggleMultiSelectKey": "Umschalten der Mehrfachauswahl config",
+    "config.MultiSelect": "Mehrfachauswahl",
     "config.Sound": "Sound",
     "config.PrioritizeCrops": "Verschieben der Ernte Priorisieren",
     "config.MoveCropWithoutTile": "Ernte separat vom Ackerboden",
