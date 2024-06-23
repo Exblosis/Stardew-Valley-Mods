@@ -1,6 +1,7 @@
-﻿{
+{
     // Config
     "config.ModEnabled": "启用模组",
+    // "config.ModEnabled.Tooltip": "启用后，按下模组修饰键并用移动按键选择物件",
     "config.ModKey": "模组修饰键",
     "config.MoveKey": "移动按键",
     "config.OverwriteKey": "强制放置修饰键",
@@ -9,6 +10,9 @@
     "config.RemoveKey": "删除按键",
     "config.ToggleCopyModeKey": "切换复制设置",
     "config.CopyMode": "复制而非移动",
+    "config.ToggleMultiSelectKey": "切换多重选择设置",
+    "config.MultiSelect": "多重选择",
+    // "config.MultiSelect.Tooltip": "启用后，按下模组修饰键并用移动按键框选物件",
     "config.Sound": "音效",
     "config.PrioritizeCrops": "移动作物优先设置",
     "config.MoveCropWithoutTile": "移动作物不连带耕地",
@@ -53,10 +57,5 @@
     "message.NotImplemented": "未能执行！",
     "message.Info.Cancel": "取消",
     "message.Info.Force": "强制",
-    "message.Info.Remove": "删除",
-
-
-    //TODO
-    "config.ToggleMultiSelectKey": "Toggle the multi select config",
-    "config.MultiSelect": "Multi select"
+    "message.Info.Remove": "删除"
 }
