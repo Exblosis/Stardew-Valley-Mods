@@ -299,6 +299,7 @@ namespace LetsMoveIt
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => I18n.Config("ModEnabled"),
+                tooltip: () => I18n.Config("ModEnabled.Tooltip"),
                 getValue: () => Config.ModEnabled,
                 setValue: value => Config.ModEnabled = value
             );
@@ -354,6 +355,7 @@ namespace LetsMoveIt
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => I18n.Config("MultiSelect"),
+                tooltip: () => I18n.Config("MultiSelect.Tooltip"),
                 getValue: () => Config.MultiSelect,
                 setValue: value => Config.MultiSelect = value
             );

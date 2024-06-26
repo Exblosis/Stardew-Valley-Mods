@@ -56,7 +56,9 @@
 
 
     // TODO
+    "config.ModEnabled.Tooltip": "Once enabled, hold down the mod key and select an object with the move key",
     "config.ToggleCopyModeKey": "Toggle the copy config",
     "config.ToggleMultiSelectKey": "Toggle the multi select config",
-    "config.MultiSelect": "Multi select"
+    "config.MultiSelect": "Multi select",
+    "config.MultiSelect.Tooltip": "Hold the Mod key and hold the Move key to select multiple objects."
 }
