@@ -1,6 +1,7 @@
 ﻿{
     // Config
     "config.ModEnabled": "Mod Enabled",
+    "config.ModEnabled.Tooltip": "Once enabled, hold down the mod key and select an object with the move key",
     "config.ModKey": "Mod Key",
     "config.MoveKey": "Move Key",
     "config.OverwriteKey": "Force placing",
@@ -9,6 +10,9 @@
     "config.RemoveKey": "Remove",
     "config.ToggleCopyModeKey": "Toggle the copy config",
     "config.CopyMode": "Copy instead of Move",
+    "config.ToggleMultiSelectKey": "Toggle the multi select config",
+    "config.MultiSelect": "Multi select",
+    "config.MultiSelect.Tooltip": "Hold the Mod key and hold the Move key to select multiple objects.",
     "config.Sound": "Sound",
     "config.PrioritizeCrops": "Moving the crop prioritize",
     "config.MoveCropWithoutTile": "crop separately from farmland",
