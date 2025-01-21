@@ -57,5 +57,8 @@
     "message.NotImplemented": "未能执行！",
     "message.Info.Cancel": "取消",
     "message.Info.Force": "强制",
-    "message.Info.Remove": "删除"
+    "message.Info.Remove": "删除",
+
+    // TODO
+    "config.DisableOnEvent": "Disable the mod during an event."
 }

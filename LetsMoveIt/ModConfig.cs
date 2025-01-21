@@ -7,6 +7,7 @@ namespace LetsMoveIt
         public bool ModEnabled { get; set; } = true;
         public bool CopyMode { get; set; } = false;
         public bool MultiSelect { get; set; } = false;
+        public bool DisableOnEvent { get; set; } = true;
 
         //Switch Components
         public bool MoveCropWithoutTile { get; set; } = true;
