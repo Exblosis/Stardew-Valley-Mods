@@ -1,5 +1,5 @@
-﻿{
-    // Config
+{
+    // 配置
     "config.ModEnabled": "启用模组",
     "config.ModEnabled.Tooltip": "启用后，按下模组修饰键并用移动按键选择物件",
     "config.ModKey": "模组修饰键",
@@ -45,13 +45,13 @@
     "config.EnableMoveFarmland": "移动耕地",
     "config.EnableMoveBush": "移动灌木",
 
-    // Dialogue
+    // 对话
     "dialogue.Remove": "您真的要{{select}}吗，此操作无法撤销！",
     "dialogue.Remove.Select1": "删除",
     "dialogue.Remove.Select2": "消灭",
     "dialogue.Remove.Select3": "摧毁",
 
-    // Message
+    // 消息
     "message.OnlyHost": "只有农场主可以进行此操作！",
     "message.BuildingIsFull": "此农场建筑已无空间！",
     "message.NotImplemented": "未能执行！",
@@ -59,6 +59,6 @@
     "message.Info.Force": "强制",
     "message.Info.Remove": "删除",
 
-    // TODO
-    "config.DisableOnEvent": "Disable the mod during an event."
+    // 注释
+    "config.DisableOnEvent": "在事件发生时禁用模组."
 }
