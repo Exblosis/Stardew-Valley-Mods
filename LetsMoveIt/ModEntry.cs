@@ -38,11 +38,13 @@ namespace LetsMoveIt
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.Display.MenuChanged += OnMenuChanged;
+            helper.Events.Player.Warped += OnWarped;
             helper.Events.Display.RenderingHud += OnRenderingHud;
             helper.Events.Display.RenderedWorld += OnRenderedWorld;
             helper.Events.Input.ButtonPressed += OnButtonPressed;
             helper.Events.Input.ButtonReleased += OnButtonReleased;
         }
+
         private void OnRenderedWorld(object? sender, RenderedWorldEventArgs e)
         {
             if (!Config.ModEnabled)
@@ -99,6 +101,8 @@ namespace LetsMoveIt
         private void OnButtonPressed(object? sender, ButtonPressedEventArgs e)
         {
             if (!Config.ModEnabled || !Context.IsPlayerFree && Game1.activeClickableMenu is not CarpenterMenu)
+                return;
+            if (Config.DisableOnEvent && Game1.eventUp)
                 return;
             if (Config.ToggleCopyModeKey != SButton.None && e.Button == Config.ToggleCopyModeKey)
             {
@@ -275,6 +279,15 @@ namespace LetsMoveIt
             OneTarget = null;
         }
 
+        private void OnWarped(object? sender, WarpedEventArgs e)
+        {
+            if (Config.DisableOnEvent && Game1.eventUp)
+            {
+                SelectedTargets.Clear();
+                OneTarget = null;
+            }
+        }
+
         private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
         {
             SelectedTargets.Clear();
@@ -302,6 +315,12 @@ namespace LetsMoveIt
                 tooltip: () => I18n.Config("ModEnabled.Tooltip"),
                 getValue: () => Config.ModEnabled,
                 setValue: value => Config.ModEnabled = value
+            );
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => I18n.Config("DisableOnEvent"),
+                getValue: () => Config.DisableOnEvent,
+                setValue: value => Config.DisableOnEvent = value
             );
             configMenu.AddKeybind(
                 mod: ModManifest,
