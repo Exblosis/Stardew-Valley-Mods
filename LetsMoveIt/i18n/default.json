@@ -55,6 +55,7 @@
     // Message
     "message.OnlyHost": "Only the farm owner can do this!",
     "message.BuildingIsFull": "This animal's building is full!",
+    "message.UnderConstruction": "Under construction!",
     "message.NotImplemented": "Not implemented!",
     "message.Info.Cancel": "to cancel",
     "message.Info.Force": "to force",

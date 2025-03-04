@@ -49,6 +49,7 @@
     // Message
     "message.OnlyHost": "Seul le propriétaire de la ferme peut faire ça !",
     "message.BuildingIsFull": "Le bâtiment de cet animal est plein !",
+    "message.UnderConstruction": "En construction !",
     "message.NotImplemented": "Pas implémenté !",
     "message.Info.Cancel": "annuler",
     "message.Info.Force": "forcer",

@@ -55,6 +55,7 @@
     // Message | Сообщения
     "message.OnlyHost": "Только владелец фермы может это сделать!",
     "message.BuildingIsFull": "Здание для этого животного переполнено!",
+    "message.UnderConstruction": "В процессе строительства!",
     "message.NotImplemented": "Не реализовано!",
     "message.Info.Cancel": "для отмены",
     "message.Info.Force": "для принудительного выполнения",

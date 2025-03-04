@@ -127,14 +127,14 @@ namespace LetsMoveIt.TargetData
                 // From CarpenterMenu Copy
                 GameLocation interior = building.GetIndoors();
                 Cabin? cabin = interior as Cabin;
-                if (building.daysOfConstructionLeft.Value > 0 || building.daysUntilUpgrade.Value > 0)
-                {
-                    Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_DuringConstruction"), 3));
-                    Game1.playSound("cancel");
-                    TargetObject = null;
-                    return;
-                }
-                else if (interior is AnimalHouse animalHouse && animalHouse.animalsThatLiveHere.Count > 0)
+                //if (building.daysOfConstructionLeft.Value > 0 || building.daysUntilUpgrade.Value > 0)
+                //{
+                    //Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_DuringConstruction"), 3));
+                    //Game1.playSound("cancel");
+                    //TargetObject = null;
+                    //return;
+                //}
+                if (interior is AnimalHouse animalHouse && animalHouse.animalsThatLiveHere.Count > 0)
                 {
                     Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_AnimalsHere"), 3));
                     Game1.playSound("cancel");

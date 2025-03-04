@@ -1,4 +1,4 @@
-{
+﻿{
     // Config
     "config.ModEnabled": "启用模组",
     "config.ModEnabled.Tooltip": "启用后，按下模组修饰键并用移动按键选择物件",
@@ -55,6 +55,7 @@
     // Message
     "message.OnlyHost": "只有农场主可以进行此操作！",
     "message.BuildingIsFull": "此农场建筑已无空间！",
+    "message.UnderConstruction": "建设中！",
     "message.NotImplemented": "未能执行！",
     "message.Info.Cancel": "取消",
     "message.Info.Force": "强制",

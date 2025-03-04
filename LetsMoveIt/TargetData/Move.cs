@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
+using StardewValley.Menus;
 using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
@@ -290,6 +291,14 @@ namespace LetsMoveIt.TargetData
             }
             else if (TargetObject is Building building)
             {
+                if (TargetObject is AnimalQueryMenu) { }
+                if (building.daysOfConstructionLeft.Value > 0 || building.daysUntilUpgrade.Value > 0)
+                {
+                    Game1.addHUDMessage(new(I18n.Message("UnderConstruction"), 3));
+                    Game1.playSound("cancel");
+                    TargetObject = null;
+                    return;
+                }
                 if (location.IsBuildableLocation())
                 {
                     if (location.buildStructure(building, tile - TileOffset, Game1.player, overwriteTile))
